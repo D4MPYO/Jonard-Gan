@@ -877,7 +877,7 @@ body.light-theme .theme-toggle .bx-sun {
         align-items: center !important;
         justify-content: center !important;
         gap: 3rem;
-        padding: 0 2rem;
+        padding: 0 !important;
         text-align: center !important;
         width: 100% !important;
     }
@@ -915,6 +915,7 @@ body.light-theme .theme-toggle .bx-sun {
         justify-content: center !important;
         width: 100% !important;
         gap: 1.5rem;
+        margin-top: 2.5rem !important;
     }
 
     .hero-image {
@@ -1015,13 +1016,18 @@ body.light-theme .theme-toggle .bx-sun {
 
     /* Show and style the mobile social links */
     .social-links-mobile {
-        display: flex;
-        position: relative;
-        flex-direction: row;
-        justify-content: center;
-        gap: 2rem;
-        margin-top: 2rem;
-        padding: 0 1rem;
+        display: flex !important;
+        position: static !important;
+        flex-direction: row !important;
+        justify-content: center !important;
+        align-items: center !important;
+        gap: 2rem !important;
+        margin-top: 2rem !important;
+        padding: 0 !important;
+        width: 100% !important;
+        left: auto !important;
+        right: auto !important;
+        transform: none !important;
     }
 
     .social-links-mobile a {
@@ -1827,65 +1833,105 @@ body.light-theme .theme-toggle .bx-sun {
     display: flex;
     flex-direction: column;
     gap: 3rem;
+    align-items: center;
+    justify-content: center;
 }
 
-.collaboration-text-top,
-.collaboration-text-bottom {
-    font-size: 4rem;
-    font-weight: 700;
-    white-space: nowrap;
-    overflow: hidden;
-    color: rgba(255, 255, 255, 0.05);
-    transition: color 0.3s ease;
-}
-
-/* Light mode text color */
-body.light-theme .collaboration-text-top,
-body.light-theme .collaboration-text-bottom {
-    color: rgba(0, 0, 0, 0.08) !important;
-}
-
-.collaboration-text-top {
-    animation: slideLeft 20s linear infinite;
-}
-
-.collaboration-text-bottom {
-    animation: slideRight 20s linear infinite;
-}
-
-@keyframes slideLeft {
-    0% {
-        transform: translateX(0);
-    }
-    100% {
-        transform: translateX(-50%);
-    }
-}
-
-@keyframes slideRight {
-    0% {
-        transform: translateX(-50%);
-    }
-    100% {
-        transform: translateX(0);
-    }
-}
-
-.collaboration-title {
+/* All collaboration text - same base style */
+.collaboration-text-slide,
+.collaboration-text-center {
     font-size: 3.5rem;
     font-weight: 700;
     text-align: center;
     color: var(--text-primary);
+    opacity: 0;
+    transition: all 0.8s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+/* Top text - slides from left */
+.collaboration-text-top {
+    transform: translateX(-100px);
+}
+
+.collaboration-text-top.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Center text - stays in place, just fades in */
+.collaboration-text-center {
+    transform: translateY(0);
+}
+
+.collaboration-text-center.animate-in {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+/* Bottom text - slides from right */
+.collaboration-text-bottom {
+    transform: translateX(100px);
+}
+
+.collaboration-text-bottom.animate-in {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Keyframe animations for scroll */
+@keyframes slideInLeft {
+    from {
+        opacity: 0;
+        transform: translateX(-100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes slideInRight {
+    from {
+        opacity: 0;
+        transform: translateX(100px);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0);
+    }
+}
+
+@keyframes fadeInScale {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
+}
+
+/* Responsive */
 @media (max-width: 768px) {
-    .collaboration-text-top,
-    .collaboration-text-bottom {
+    .collaboration-text-slide,
+    .collaboration-text-center {
         font-size: 2rem;
     }
 
-    .collaboration-title {
-        font-size: 2rem;
+    .collaboration-text-top {
+        transform: translateX(-50px);
+    }
+
+    .collaboration-text-bottom {
+        transform: translateX(50px);
+    }
+}
+
+@media (max-width: 480px) {
+    .collaboration-text-slide,
+    .collaboration-text-center {
+        font-size: 1.5rem;
     }
 }
 

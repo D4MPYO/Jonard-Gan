@@ -1169,6 +1169,7 @@ document.addEventListener('DOMContentLoaded', () => {
     new SmoothScroll();
     new HeaderScroll();
     new CertificateLightbox(soundEffects);
+    new CollaborationAnimations();
     // ParallaxEffect removed to prevent gap between sections
 
     // Add click sound to all relevant elements
@@ -1266,6 +1267,47 @@ class CertificateLightbox {
         this.lightbox.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
         console.log('🖼️ Lightbox closed');
+    }
+}
+
+// ===================================
+// Collaboration Section Scroll Animations
+// ===================================
+class CollaborationAnimations {
+    constructor() {
+        this.elements = document.querySelectorAll('[data-scroll-animation]');
+        this.init();
+    }
+
+    init() {
+        if (!this.elements.length) {
+            console.log('⚠️ No collaboration elements found for animation');
+            return;
+        }
+
+        console.log('✨ Initializing collaboration animations');
+
+        // Create IntersectionObserver for scroll animations
+        const observerOptions = {
+            threshold: 0.2,
+            rootMargin: '0px 0px -100px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('animate-in');
+                    console.log('🎬 Animating:', entry.target.className);
+                }
+            });
+        }, observerOptions);
+
+        // Observe all collaboration elements
+        this.elements.forEach(element => {
+            observer.observe(element);
+        });
+
+        console.log('✅ Collaboration animations initialized');
     }
 }
 
