@@ -1,4 +1,104 @@
 /* ===================================
+   Soundbar
+   ================================ */
+.soundbar-wrapper {
+    width: 2.5rem;
+    height: 2.5rem;
+    background: rgba(139, 49, 255, 0.1);
+    border: 2px solid var(--color-primary);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: var(--transition-default);
+    position: relative;
+    z-index: 1000;
+    pointer-events: auto;
+    cursor: pointer;
+    box-shadow: 0 2px 8px rgba(139, 49, 255, 0.2);
+}
+
+.soundbar-wrapper:hover {
+    background: var(--color-primary);
+}
+
+.soundbar-wrapper:hover .soundbar span {
+    background: var(--color-white);
+}
+
+.soundbar {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.15rem;
+    width: 1.5rem;
+    height: 1.5rem;
+    position: relative;
+    cursor: pointer;
+}
+
+.soundbar span {
+    width: 0.125rem;
+    height: 100%;
+    background: var(--text-secondary);
+    transform-origin: bottom;
+    transition: var(--transition-default);
+    border-radius: 0.25rem;
+}
+
+.soundbar span:nth-child(1) {
+    transform: scaleY(0.8);
+}
+
+.soundbar span:nth-child(2) {
+    transform: scaleY(0.6);
+}
+
+.soundbar span:nth-child(3) {
+    transform: scaleY(0.99);
+}
+
+.soundbar span:nth-child(4) {
+    transform: scaleY(0.4);
+}
+
+.soundbar.playing span {
+    background: var(--color-primary);
+    animation: soundBars 1.5s infinite alternate-reverse;
+}
+
+.soundbar.playing span:nth-child(1) {
+    animation-delay: 0.4s;
+}
+
+.soundbar.playing span:nth-child(2) {
+    animation-delay: 0.2s;
+}
+
+.soundbar.playing span:nth-child(3) {
+    animation-delay: 0.6s;
+}
+
+.soundbar.playing span:nth-child(4) {
+    animation-delay: 0.8s;
+}
+
+@keyframes soundBars {
+    0% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+    50% {
+        opacity: 0.3;
+        transform: scaleY(0.2);
+    }
+    100% {
+        opacity: 1;
+        transform: scaleY(1);
+    }
+}
+
+/* ===================================
    DEVFOLIO-INSPIRED PORTFOLIO
    ================================ */
 
@@ -218,6 +318,10 @@ body {
     z-index: 1;
 }
 
+.achievements-section {
+    padding-top: 0;
+}
+
 .section-header {
     text-align: center;
     margin-bottom: 3rem;
@@ -264,6 +368,15 @@ body {
     100% {
         background-position: 200% 0%;
     }
+}
+
+.hero-name-gradient {
+    background: linear-gradient(90deg, #d900d9 0%, #00aaff 50%, #d900d9 100%);
+    background-size: 200% 100%;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    animation: gradientWave 3s linear infinite;
 }
 
 .link {
@@ -923,7 +1036,7 @@ body.light-theme .theme-toggle .bx-sun {
     background: var(--bg-primary);
     position: relative;
     z-index: 2;
-    padding: 6rem 0 2rem !important;
+    padding: 6rem 0 0rem !important;
     margin: 0 !important;
 }
 

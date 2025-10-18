@@ -45,10 +45,11 @@ class ProgressBar {
 // Menu Toggle
 // ===================================
 class Menu {
-    constructor() {
+    constructor(soundEffects) {
         this.menuCheckbox = document.getElementById('menu-toggle');
         this.menuLinks = document.querySelectorAll('.menu-link');
         this.menuContent = document.querySelector('.menu-content');
+        this.soundEffects = soundEffects;
 
         console.log('🍔 Menu initialized');
         console.log('   - Checkbox:', this.menuCheckbox ? '✅' : '❌');
@@ -66,6 +67,7 @@ class Menu {
 
         // Animate menu content on open/close
         this.menuCheckbox.addEventListener('change', () => {
+            this.soundEffects.playMenuSound();
             console.log('🍔 Menu toggled:', this.menuCheckbox.checked ? 'OPEN' : 'CLOSED');
 
             if (this.menuCheckbox.checked) {
@@ -109,6 +111,7 @@ class Menu {
         // Close menu when clicking on a link
         this.menuLinks.forEach(link => {
             link.addEventListener('click', () => {
+                this.soundEffects.playClickSound();
                 console.log('🔗 Menu link clicked:', link.textContent);
                 this.menuCheckbox.checked = false;
             });
@@ -1125,13 +1128,37 @@ class ParticleBackground {
 }
 
 // ===================================
+// Sound Effects
+// ===================================
+class SoundEffects {
+    constructor() {
+        this.menuSound = new Audio('assets/soundeffect/pop-sound.wav');
+        this.clickSound = new Audio('assets/soundeffect/mouse-click.mp3');
+        this.menuSound.preload = 'auto';
+        this.clickSound.preload = 'auto';
+    }
+
+    playMenuSound() {
+        this.menuSound.currentTime = 0;
+        this.menuSound.play();
+    }
+
+    playClickSound() {
+        this.clickSound.currentTime = 0;
+        this.clickSound.play();
+    }
+}
+
+// ===================================
 // Initialize Everything
 // ===================================
 document.addEventListener('DOMContentLoaded', () => {
+    const soundEffects = new SoundEffects();
+
     // Initialize all components
     new ParticleBackground();
     new ProgressBar();
-    new Menu();
+    new Menu(soundEffects);
     new ThemeToggle();
     new Soundbar();
     new TypedText();
@@ -1141,8 +1168,15 @@ document.addEventListener('DOMContentLoaded', () => {
     new ContactForm();
     new SmoothScroll();
     new HeaderScroll();
-    new CertificateLightbox();
+    new CertificateLightbox(soundEffects);
     // ParallaxEffect removed to prevent gap between sections
+
+    // Add click sound to all relevant elements
+    document.querySelectorAll('.link, .accordion-button, .project-btn, .theme-toggle, .certificate-image, .download-cv-btn').forEach(element => {
+        element.addEventListener('click', () => {
+            soundEffects.playClickSound();
+        });
+    });
 
     // Initial page load animation
     gsap.from('.hero-content', {
@@ -1167,11 +1201,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Certificate Lightbox
 // ===================================
 class CertificateLightbox {
-    constructor() {
+    constructor(soundEffects) {
         this.lightbox = document.getElementById('certificateLightbox');
         this.lightboxImage = document.getElementById('lightboxImage');
         this.lightboxClose = document.getElementById('lightboxClose');
         this.certificateImages = document.querySelectorAll('.certificate-image');
+        this.soundEffects = soundEffects;
 
         this.init();
     }
@@ -1196,12 +1231,14 @@ class CertificateLightbox {
 
         // Close button
         this.lightboxClose.addEventListener('click', () => {
+            this.soundEffects.playClickSound();
             this.closeLightbox();
         });
 
         // Click outside to close
         this.lightbox.addEventListener('click', (e) => {
             if (e.target === this.lightbox) {
+                this.soundEffects.playClickSound();
                 this.closeLightbox();
             }
         });
@@ -1209,6 +1246,7 @@ class CertificateLightbox {
         // ESC key to close
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.lightbox.classList.contains('active')) {
+                this.soundEffects.playClickSound();
                 this.closeLightbox();
             }
         });
