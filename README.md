@@ -2,7 +2,7 @@
 
 This repository contains the source code for my personal portfolio website, showcasing my skills, projects, and journey as a developer. The website is designed to be a dynamic and engaging experience, reflecting my passion for creating modern and aesthetic web applications.
 
-**Live Website:** [https://jonard-gan.github.io/](https://jonard-gan.github.io/)
+**Live Website:** [https://jonardgan.netlify.app/](https://jonardgan.netlify.app/)
 
 ## Features & Animations
 
