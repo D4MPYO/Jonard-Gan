@@ -177,15 +177,28 @@ class Soundbar {
     init() {
         if (!this.audio || !this.soundbar) return;
 
+        // Ensure loop is enabled
+        this.audio.loop = true;
+
         this.soundbar.addEventListener('click', () => {
             if (this.isPlaying) {
                 this.audio.pause();
                 this.soundbar.classList.remove('playing');
             } else {
-                this.audio.play();
+                this.audio.play().catch(err => {
+                    console.log('Audio play failed:', err);
+                });
                 this.soundbar.classList.add('playing');
             }
             this.isPlaying = !this.isPlaying;
+        });
+
+        // Handle audio end event as backup
+        this.audio.addEventListener('ended', () => {
+            if (this.isPlaying) {
+                this.audio.currentTime = 0;
+                this.audio.play();
+            }
         });
     }
 }
@@ -328,6 +341,9 @@ class ScrollAnimations {
             });
         } */
 
+        // About Section Animations
+        this.initAboutAnimations();
+
         // About info items animation
         const infoItems = gsap.utils.toArray('.info-item');
         if (infoItems.length > 0) {
@@ -343,6 +359,9 @@ class ScrollAnimations {
                 }
             });
         }
+
+        // Certificates Section Animations
+        this.initCertificatesAnimations();
 
         // Project cards hover animation with GSAP
         this.initProjectCards();
@@ -451,6 +470,174 @@ class ScrollAnimations {
         });
 
         console.log('✅ Project cards GSAP animations initialized');
+    }
+
+    initAboutAnimations() {
+        const aboutImage = document.querySelector('.about-image');
+        const aboutContactCard = document.querySelector('.about-contact-card');
+        const aboutTextParagraphs = document.querySelectorAll('.about-text p');
+        const aboutIntroTitle = document.querySelector('.about-intro-title');
+
+        // Animate about image - fade in and slide up from bottom
+        if (aboutImage) {
+            gsap.from(aboutImage, {
+                opacity: 0,
+                y: 60,
+                scale: 0.95,
+                duration: 1,
+                ease: 'power3.out',
+                scrollTrigger: {
+                    trigger: aboutImage,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
+
+        // Animate contact card - fade in and slide up with delay
+        if (aboutContactCard) {
+            gsap.from(aboutContactCard, {
+                opacity: 0,
+                y: 40,
+                duration: 0.9,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: aboutContactCard,
+                    start: 'top 85%',
+                    toggleActions: 'play none none reverse'
+                },
+                delay: 0.2
+            });
+        }
+
+        // Animate introduction title - fade in and slide from left
+        if (aboutIntroTitle) {
+            gsap.from(aboutIntroTitle, {
+                opacity: 0,
+                x: -50,
+                duration: 0.8,
+                ease: 'power2.out',
+                scrollTrigger: {
+                    trigger: aboutIntroTitle,
+                    start: 'top 80%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
+
+        // Animate text paragraphs - staggered fade in
+        if (aboutTextParagraphs.length > 0) {
+            gsap.from(aboutTextParagraphs, {
+                opacity: 0,
+                y: 30,
+                duration: 0.8,
+                ease: 'power2.out',
+                stagger: 0.15,
+                scrollTrigger: {
+                    trigger: '.about-text',
+                    start: 'top 75%',
+                    toggleActions: 'play none none reverse'
+                }
+            });
+        }
+
+        console.log('✅ About section animations initialized');
+    }
+
+    initCertificatesAnimations() {
+        const certificateCards = document.querySelectorAll('.certificate-card');
+
+        // Animate each certificate card with stagger effect
+        if (certificateCards.length > 0) {
+            certificateCards.forEach((card, index) => {
+                // Main card animation - slide up and fade in
+                gsap.from(card, {
+                    opacity: 0,
+                    y: 80,
+                    scale: 0.9,
+                    duration: 0.8,
+                    ease: 'power3.out',
+                    scrollTrigger: {
+                        trigger: card,
+                        start: 'top 85%',
+                        toggleActions: 'play none none reverse'
+                    },
+                    delay: index * 0.15
+                });
+
+                // Animate certificate image inside - subtle zoom effect
+                const certImage = card.querySelector('.certificate-image');
+                if (certImage) {
+                    gsap.from(certImage, {
+                        scale: 1.1,
+                        duration: 1,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        delay: index * 0.15 + 0.2
+                    });
+                }
+
+                // Animate certificate badge - rotate and fade in
+                const certBadge = card.querySelector('.certificate-badge');
+                if (certBadge) {
+                    gsap.from(certBadge, {
+                        opacity: 0,
+                        rotation: -180,
+                        scale: 0,
+                        duration: 0.8,
+                        ease: 'back.out(1.7)',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        delay: index * 0.15 + 0.4
+                    });
+                }
+
+                // Animate certificate content - slide up
+                const certContent = card.querySelector('.certificate-content');
+                if (certContent) {
+                    gsap.from(certContent, {
+                        opacity: 0,
+                        y: 20,
+                        duration: 0.7,
+                        ease: 'power2.out',
+                        scrollTrigger: {
+                            trigger: card,
+                            start: 'top 85%',
+                            toggleActions: 'play none none reverse'
+                        },
+                        delay: index * 0.15 + 0.3
+                    });
+                }
+
+                // Hover animation - lift and glow effect
+                card.addEventListener('mouseenter', () => {
+                    gsap.to(card, {
+                        y: -10,
+                        boxShadow: '0 20px 60px rgba(139, 49, 255, 0.5)',
+                        duration: 0.4,
+                        ease: 'power2.out'
+                    });
+                });
+
+                card.addEventListener('mouseleave', () => {
+                    gsap.to(card, {
+                        y: 0,
+                        boxShadow: '0 10px 30px rgba(0, 0, 0, 0.2)',
+                        duration: 0.4,
+                        ease: 'power2.out'
+                    });
+                });
+            });
+        }
+
+        console.log('✅ Certificates section animations initialized');
     }
 
     initCollaborationAnimation() {
@@ -588,13 +775,14 @@ class HeaderScroll {
 // Semi-Circular Skills Wheel with GSAP (Draggable + Snap)
 // ===================================
 class SkillsWheel {
-    constructor() {
+    constructor(soundEffects) {
         this.wheel = document.getElementById('skillsWheel');
         this.cards = document.querySelectorAll('.skill-card');
         this.descriptionBox = document.getElementById('skillDescription');
         this.dragIndicator = document.querySelector('.drag-me-indicator');
         this.collisionPoint = document.getElementById('collisionPoint');
         this.sphere = document.querySelector('.sphere');
+        this.soundEffects = soundEffects;
 
         this.currentRotation = 0;
         this.isDragging = false;
@@ -609,6 +797,13 @@ class SkillsWheel {
         this.autoSpinAnimation = null;
         this.inactivityTimer = null;
         this.inactivityDelay = 7000; // 7 seconds
+
+        // Ticking sound properties
+        this.lastTickRotation = 0;
+        this.tickInterval = 8; // Play tick sound every 8 degrees of rotation
+        this.tickSound = new Audio('assets/soundeffect/wheel-spin.wav');
+        this.tickSound.volume = 0.3; // Subtle volume
+        this.tickSound.preload = 'auto';
 
         this.init();
     }
@@ -645,6 +840,49 @@ class SkillsWheel {
             console.log('🚀 Starting auto-spin...');
             this.startAutoSpin();
         }, 500);
+
+        // Add click event listener to the sphere
+        this.sphere.addEventListener('click', () => this.spinToRandom());
+    }
+
+    spinToRandom() {
+        if (this.isAnimating) return;
+
+        this.hideDescription();
+        this.isAnimating = true;
+        this.stopAutoSpin();
+        this.clearInactivityTimer();
+
+        const randomCardIndex = Math.floor(Math.random() * this.cards.length);
+        const anglePerCard = 360 / this.cards.length;
+        const randomAngle = -randomCardIndex * anglePerCard;
+
+        // Add extra rotations for the spinning effect
+        const currentRotation = gsap.getProperty(this.wheel, "rotation");
+        const rotations = 5;
+        const finalRotation = currentRotation + (rotations * 360) + (randomAngle - (currentRotation % 360));
+
+        const soundDuration = this.soundEffects.gearClickSound.duration;
+
+        this.soundEffects.playGearClickSound();
+
+        gsap.to(this.wheel, {
+            rotation: finalRotation,
+            duration: soundDuration,
+            ease: "power2.inOut",
+            onUpdate: () => {
+                this.currentRotation = gsap.getProperty(this.wheel, "rotation");
+                this.updateCardRotations();
+            },
+            onComplete: () => {
+                this.currentRotation = finalRotation;
+                this.detectActiveCard();
+                this.isAnimating = false;
+                this.startInactivityTimer();
+            }
+        });
+
+        console.log(`🎡 Spinning to a random skill: ${randomCardIndex}`);
     }
 
     positionCards() {
@@ -685,6 +923,26 @@ class SkillsWheel {
         });
     }
 
+    playTickSound() {
+        // Create a new audio instance for overlapping sounds
+        const tick = this.tickSound.cloneNode();
+        tick.volume = 0.3;
+        tick.play().catch(err => {
+            // Ignore audio play errors (e.g., user hasn't interacted yet)
+        });
+    }
+
+    checkAndPlayTick() {
+        // Calculate how many degrees have passed since last tick
+        const rotationDiff = Math.abs(this.currentRotation - this.lastTickRotation);
+
+        // If we've rotated enough degrees, play a tick sound
+        if (rotationDiff >= this.tickInterval) {
+            this.playTickSound();
+            this.lastTickRotation = this.currentRotation;
+        }
+    }
+
     setupDrag() {
         let startAngle = 0;
 
@@ -708,6 +966,9 @@ class SkillsWheel {
             this.lastAngle = angle;
             this.lastTime = Date.now();
             this.velocity = 0;
+
+            // Reset tick rotation tracking on drag start
+            this.lastTickRotation = this.currentRotation;
 
             // Stop auto-spin on interaction
             this.stopAutoSpin();
@@ -735,8 +996,10 @@ class SkillsWheel {
                 if (deltaAngle > Math.PI) deltaAngle -= 2 * Math.PI;
                 if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
 
-                // Calculate velocity
-                this.velocity = deltaAngle / deltaTime * 16;
+                // Calculate velocity with smoothing for better momentum feel
+                const instantVelocity = deltaAngle / deltaTime * 16;
+                // Smooth velocity with exponential moving average
+                this.velocity = this.velocity * 0.5 + instantVelocity * 0.5;
             }
 
             const rotation = (currentAngle - startAngle) * 180 / Math.PI;
@@ -748,6 +1011,9 @@ class SkillsWheel {
 
             // Update card rotations to keep them upright
             this.updateCardRotations();
+
+            // Check and play tick sound during drag
+            this.checkAndPlayTick();
 
             this.lastAngle = currentAngle;
             this.lastTime = currentTime;
@@ -788,32 +1054,41 @@ class SkillsWheel {
     }
 
     applyMomentum() {
-        const momentumStep = () => {
-            // Apply friction
-            this.velocity *= 0.95;
+        // Use GSAP for smooth free-wheeling momentum animation
+        const velocityMultiplier = 1200; // Very high for continuous spinning feel
 
-            // Stop when velocity is too small
-            if (Math.abs(this.velocity) < 0.001) {
-                // Snap to nearest card
+        // Calculate total rotation based on velocity
+        let totalRotation = this.velocity * velocityMultiplier;
+
+        // Minimum spin threshold - if drag was too slow, just snap
+        if (Math.abs(totalRotation) < 20) {
+            this.snapToNearest();
+            return;
+        }
+
+        const finalRotation = this.currentRotation + totalRotation;
+
+        // Calculate duration based on spin distance - much longer for continuous feel
+        const rotations = Math.abs(totalRotation) / 360;
+        const duration = Math.min(rotations * 2, 8); // Scale with rotation, max 8s for long spins
+
+        // Smooth deceleration animation with GSAP - free-wheel feel
+        gsap.to(this.wheel, {
+            rotation: finalRotation,
+            duration: duration,
+            ease: "power4.out", // Even stronger easing for very gradual slowdown
+            onUpdate: () => {
+                this.currentRotation = gsap.getProperty(this.wheel, "rotation");
+                this.updateCardRotations();
+                this.checkAndPlayTick();
+            },
+            onComplete: () => {
+                this.currentRotation = finalRotation;
                 this.snapToNearest();
-                return;
             }
+        });
 
-            // Apply velocity to rotation
-            this.currentRotation += this.velocity * 2;
-
-            gsap.set(this.wheel, {
-                rotation: this.currentRotation
-            });
-
-            // Update card rotations
-            this.updateCardRotations();
-
-            // Continue animation
-            requestAnimationFrame(momentumStep);
-        };
-
-        momentumStep();
+        console.log('🚀 Free-wheeling - spinning', totalRotation.toFixed(1), 'degrees (', (rotations.toFixed(1)), 'rotations) over', duration.toFixed(2), 's');
     }
 
     snapToNearest() {
@@ -834,6 +1109,8 @@ class SkillsWheel {
             onComplete: () => {
                 this.currentRotation = nearestSnap;
                 this.detectActiveCard();
+                // Play snap sound when card centers
+                this.playTickSound();
             }
         });
 
@@ -1134,8 +1411,10 @@ class SoundEffects {
     constructor() {
         this.menuSound = new Audio('assets/soundeffect/pop-sound.wav');
         this.clickSound = new Audio('assets/soundeffect/mouse-click.mp3');
+        this.gearClickSound = new Audio('assets/soundeffect/gear-click.mp3');
         this.menuSound.preload = 'auto';
         this.clickSound.preload = 'auto';
+        this.gearClickSound.preload = 'auto';
     }
 
     playMenuSound() {
@@ -1146,6 +1425,19 @@ class SoundEffects {
     playClickSound() {
         this.clickSound.currentTime = 0;
         this.clickSound.play();
+    }
+
+    playGearClickSound() {
+        this.gearClickSound.currentTime = 0;
+        this.gearClickSound.play();
+    }
+
+    playGearClickSoundMultiple(times, interval) {
+        for (let i = 0; i < times; i++) {
+            setTimeout(() => {
+                this.playGearClickSound();
+            }, i * interval);
+        }
     }
 }
 
@@ -1163,13 +1455,15 @@ document.addEventListener('DOMContentLoaded', () => {
     new Soundbar();
     new TypedText();
     new Accordion();
-    new SkillsWheel();
+    new SkillsWheel(soundEffects);
     new ScrollAnimations();
     new ContactForm();
     new SmoothScroll();
     new HeaderScroll();
     new CertificateLightbox(soundEffects);
     new CollaborationAnimations();
+    new ExperienceTabs(soundEffects);
+    new BackToTopButton();
     // ParallaxEffect removed to prevent gap between sections
 
     // Add click sound to all relevant elements
@@ -1308,6 +1602,140 @@ class CollaborationAnimations {
         });
 
         console.log('✅ Collaboration animations initialized');
+    }
+}
+
+// ===================================
+// Experience Tabs - Drawer Effect
+// ===================================
+class ExperienceTabs {
+    constructor(soundEffects) {
+        this.tabs = document.querySelectorAll('.experience-tab');
+        this.cards = document.querySelectorAll('.experience-card');
+        this.container = document.querySelector('.experience-cards-container');
+        this.soundEffects = soundEffects;
+        this.currentOrder = ['android', 'web', 'programmer', 'designer', 'photographer'];
+        this.init();
+    }
+
+    init() {
+        if (!this.tabs.length || !this.cards.length || !this.container) {
+            console.log('⚠️ Experience tabs elements not found');
+            return;
+        }
+
+        console.log('🗂️ Initializing Experience Tabs');
+
+        // Bind context for event handlers
+        this.handleMouseEnter = this.handleMouseEnter.bind(this);
+        this.handleMouseLeave = this.handleMouseLeave.bind(this);
+
+        // Add and remove hover listeners based on screen size
+        this.handleResize();
+        window.addEventListener('resize', () => this.handleResize());
+
+        // Tab click events
+        this.tabs.forEach((tab, index) => {
+            tab.addEventListener('click', () => {
+                this.handleTabClick(tab, index);
+            });
+        });
+
+        console.log('✅ Experience tabs initialized');
+    }
+
+    handleResize() {
+        if (window.innerWidth <= 968) {
+            this.tabs.forEach(tab => {
+                tab.removeEventListener('mouseenter', this.handleMouseEnter);
+                tab.removeEventListener('mouseleave', this.handleMouseLeave);
+            });
+        } else {
+            this.tabs.forEach(tab => {
+                tab.addEventListener('mouseenter', this.handleMouseEnter);
+                tab.addEventListener('mouseleave', this.handleMouseLeave);
+            });
+        }
+    }
+
+    handleMouseEnter(e) {
+        const experienceType = e.target.getAttribute('data-experience');
+        this.liftCard(experienceType);
+    }
+
+    handleMouseLeave() {
+        this.removeLift();
+    }
+
+    liftCard(experienceType) {
+        // Find and lift the card that matches the hovered tab
+        this.cards.forEach(card => {
+            if (card.getAttribute('data-card') === experienceType) {
+                card.classList.add('lift-on-hover');
+            }
+        });
+    }
+
+    removeLift() {
+        // Remove lift from all cards
+        this.cards.forEach(card => {
+            card.classList.remove('lift-on-hover');
+        });
+    }
+
+    handleTabClick(clickedTab, clickedIndex) {
+        const experienceType = clickedTab.getAttribute('data-experience');
+
+        // Play sound
+        this.soundEffects.playClickSound();
+
+        // Update active tab
+        this.tabs.forEach(tab => tab.classList.remove('active'));
+        clickedTab.classList.add('active');
+
+        // Reorder cards - bring clicked card to front
+        const clickedCardIndex = this.currentOrder.indexOf(experienceType);
+
+        if (clickedCardIndex !== 0) {
+            // Move clicked experience to front
+            this.currentOrder.splice(clickedCardIndex, 1);
+            this.currentOrder.unshift(experienceType);
+
+            // Update card positions
+            this.updateCardOrder();
+        }
+
+        console.log('📂 Switched to:', experienceType);
+    }
+
+    updateCardOrder() {
+        this.cards.forEach(card => {
+            const cardType = card.getAttribute('data-card');
+            const newIndex = this.currentOrder.indexOf(cardType);
+            card.setAttribute('data-index', newIndex);
+        });
+    }
+}
+
+// ===================================
+// Fixed Back to Top Button
+// ===================================
+class BackToTopButton {
+    constructor() {
+        this.button = document.querySelector('.back-to-top-fixed');
+        this.init();
+    }
+
+    init() {
+        if (!this.button) return;
+
+        window.addEventListener('scroll', () => {
+            if (window.pageYOffset > 300) {
+                this.button.classList.add('show');
+            } else {
+                this.button.classList.remove('show');
+            }
+        });
     }
 }
 

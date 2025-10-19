@@ -44,6 +44,7 @@
                 </div>
 
                 <audio id="background-music" src="assets/soundeffect/song.mp3" loop></audio>
+                <audio id="gear-click-sound" src="assets/soundeffect/gear-click.mp3"></audio>
 
                 <!-- Theme Toggle -->
                 <button class="theme-toggle link" aria-label="Toggle Theme">
@@ -200,21 +201,6 @@
                         help drive innovation in the tech industry. I am dedicated to improving and developing
                         my abilities to make meaningful contributions in the future.
                     </p>
-
-                    <div class="about-info">
-                        <div class="info-item">
-                            <i class='bx bxs-user'></i>
-                            <span>Jonard Gan</span>
-                        </div>
-                        <div class="info-item">
-                            <i class='bx bxs-phone'></i>
-                            <span>+63 961 787 4944</span>
-                        </div>
-                        <div class="info-item">
-                            <i class='bx bxl-gmail'></i>
-                            <span>jonardgan01@gmail.com</span>
-                        </div>
-                    </div>
                 </div>
             </div>
         </div>
@@ -293,67 +279,99 @@
                 <p class="section-subtitle">My journey as a developer</p>
             </div>
 
-            <div class="timeline">
-                <div class="timeline-item">
-                    <div class="timeline-marker" style="--accent-color: #4CAF50;"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-badge">Android Developer</div>
-                        <h3 class="timeline-title">Mobile App Developer for Student Research</h3>
-                        <p class="timeline-description">
-                            Collaborated with students in developing Android applications for their academic and research requirements.
-                            Responsibilities included implementing user interfaces, quiz functionalities, result tracking, and local data management.
-                            Applications were built using Java and Android Studio, adhering to their project specifications and academic guidelines.
-                        </p>
-                    </div>
+            <!-- Experience Tabs -->
+            <div class="experience-tabs-wrapper">
+                <div class="experience-tabs">
+                    <button class="experience-tab active" data-experience="android">
+                        <span>Android Developer</span>
+                    </button>
+                    <button class="experience-tab" data-experience="web">
+                        <span>Web Developer</span>
+                    </button>
+                    <button class="experience-tab" data-experience="programmer">
+                        <span>Programmer</span>
+                    </button>
+                    <button class="experience-tab" data-experience="designer">
+                        <span>Web Designer</span>
+                    </button>
+                    <button class="experience-tab" data-experience="photographer">
+                        <span>Photographer</span>
+                    </button>
                 </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-marker" style="--accent-color: #41516C;"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-badge">Web Developer</div>
-                        <h3 class="timeline-title">Web Developer for Coffee Shop</h3>
-                        <p class="timeline-description">
-                            The instructor assigned us a project to create a client-based website for a coffee shop.
-                            I began by analyzing the client's requirements and designing a sitemap and wireframe to plan the layout and user flow.
-                            After finalizing the design, I developed a responsive and user-friendly website, ensuring it met the client's objectives.
-                            This project enhanced my skills in web development and client-focused design.
-                        </p>
+                <!-- Stacked Cards Container -->
+                <div class="experience-cards-container">
+                    <!-- Android Developer Card -->
+                    <div class="experience-card" data-card="android" data-index="0">
+                        <div class="experience-card-content">
+                            
+                            <h3 class="experience-card-title">Mobile App Developer for Student Research</h3>
+                            <p class="experience-card-description">
+                                Collaborated with students in developing Android applications for their academic and research requirements.
+                                Responsibilities included implementing user interfaces, quiz functionalities, result tracking, and local data management.
+                                Applications were built using Java and Android Studio, adhering to their project specifications and academic guidelines.
+                            </p>
+                        </div>
+                        <div class="experience-card-image">
+                        </div>
                     </div>
-                </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-marker" style="--accent-color: #FBCA3E;"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-badge">Programmer</div>
-                        <h3 class="timeline-title">Programming Projects</h3>
-                        <p class="timeline-description">
-                            I coded several programs and successfully completed various activities and logic-based tasks.
-                            I consider myself a fast learner, although I tend to forget things quickly as well.
-                        </p>
+                    <!-- Web Developer Card -->
+                    <div class="experience-card" data-card="web" data-index="1">
+                        <div class="experience-card-content">
+                            
+                            <h3 class="experience-card-title">Web Developer for Coffee Shop</h3>
+                            <p class="experience-card-description">
+                                The instructor assigned us a project to create a client-based website for a coffee shop.
+                                I began by analyzing the client's requirements and designing a sitemap and wireframe to plan the layout and user flow.
+                                After finalizing the design, I developed a responsive and user-friendly website, ensuring it met the client's objectives.
+                                This project enhanced my skills in web development and client-focused design.
+                            </p>
+                        </div>
+                        <div class="experience-card-image">
+                        </div>
                     </div>
-                </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-marker" style="--accent-color: #E24A68;"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-badge">Web Designer</div>
-                        <h3 class="timeline-title">Web Designer for Liham Cafe</h3>
-                        <p class="timeline-description">
-                            I designed the websites I created for Liham Cafe, focusing on creating visually appealing and functional layouts that align with the brand's identity.
-                            Additionally, I designed my personal portfolio with attention to detail, ensuring it showcases my skills and accomplishments effectively.
-                        </p>
+                    <!-- Programmer Card -->
+                    <div class="experience-card" data-card="programmer" data-index="2">
+                        <div class="experience-card-content">
+                            
+                            <h3 class="experience-card-title">Programming Projects</h3>
+                            <p class="experience-card-description">
+                                I coded several programs and successfully completed various activities and logic-based tasks.
+                                I consider myself a fast learner, although I tend to forget things quickly as well.
+                            </p>
+                        </div>
+                        <div class="experience-card-image">
+                        </div>
                     </div>
-                </div>
 
-                <div class="timeline-item">
-                    <div class="timeline-marker" style="--accent-color: #1B5F8C;"></div>
-                    <div class="timeline-content">
-                        <div class="timeline-badge">Photographer</div>
-                        <h3 class="timeline-title">Amateur Photographer</h3>
-                        <p class="timeline-description">
-                            Photography is one of my favorite ways to pass the time. Whether I'm capturing everyday moments or looking for something special,
-                            it lets me appreciate the world around me in a different way. It's a great way to relax, get creative, and create memories that last.
-                        </p>
+                    <!-- Web Designer Card -->
+                    <div class="experience-card" data-card="designer" data-index="3">
+                        <div class="experience-card-content">
+                            
+                            <h3 class="experience-card-title">Web Designer for Liham Cafe</h3>
+                            <p class="experience-card-description">
+                                I designed the websites I created for Liham Cafe, focusing on creating visually appealing and functional layouts that align with the brand's identity.
+                                Additionally, I designed my personal portfolio with attention to detail, ensuring it showcases my skills and accomplishments effectively.
+                            </p>
+                        </div>
+                        <div class="experience-card-image">
+                        </div>
+                    </div>
+
+                    <!-- Photographer Card -->
+                    <div class="experience-card" data-card="photographer" data-index="4">
+                        <div class="experience-card-content">
+                            
+                            <h3 class="experience-card-title">Amateur Photographer</h3>
+                            <p class="experience-card-description">
+                                Photography is one of my favorite ways to pass the time. Whether I'm capturing everyday moments or looking for something special,
+                                it lets me appreciate the world around me in a different way. It's a great way to relax, get creative, and create memories that last.
+                            </p>
+                        </div>
+                        <div class="experience-card-image">
+                        </div>
                     </div>
                 </div>
             </div>
@@ -502,8 +520,8 @@
                         <div class="skill-card" data-skill="Java" data-description="Experienced in Java for Android. I build mobile apps with intuitive UIs and efficient data handling.">
                             <img src="Image/SVG/java.svg" alt="Java">
                         </div>
-                        <div class="skill-card" data-skill="Android Development" data-description="Capable of full Android app development. I handle UI design, quiz systems, and educational functionality.">
-                            <img src="Image/SVG/android.svg" alt="Android">
+                        <div class="skill-card" data-skill="Android Studio" data-description="Proficient in Android Studio IDE. I develop mobile applications with layouts, activities, and integrated databases.">
+                            <img src="Image/SVG/android.svg" alt="Android Studio">
                         </div>
                         <div class="skill-card" data-skill="Python" data-description="Familiar with Python programming. I use it for logic-based tasks and academic projects.">
                             <img src="Image/SVG/python.svg" alt="Python">
@@ -571,7 +589,7 @@
                             </div>
                         </div>
                         <div class="browser-content">
-                            <img src="Image/VPES-SIMS.png" alt="VPES-SIMS" class="project-image">
+                            <img src="Image/vpes.png" alt="VPES-SIMS" class="project-image">
                         </div>
                     </div>
 
@@ -594,11 +612,11 @@
 
                         <div class="project-links-label">Project Links</div>
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO" class="project-btn" target="_blank">
+                            <a href="https://github.com/D4MPYO/VPES" class="project-btn" target="_blank">
                                 <i class='bx bxl-github'></i>
                                 <span>Github</span>
                             </a>
-                            <a href="#" class="project-btn" target="_blank">
+                            <a href="https://d4mpyo.github.io/VPES/" class="project-btn" target="_blank">
                                 <i class='bx bx-link-external'></i>
                                 <span>Live Link</span>
                             </a>
@@ -640,7 +658,7 @@
 
                         <div class="project-links-label">Project Links</div>
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/Liham-Cafe-V.2" class="project-btn" target="_blank">
+                            <a href="https://github.com/D4MPYO/Liham-Cafe" class="project-btn" target="_blank"> 
                                 <i class='bx bxl-github'></i>
                                 <span>Github</span>
                             </a>
@@ -680,7 +698,7 @@
 
                         <div class="project-links-label">Project Links</div>
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO" class="project-btn" target="_blank">
+                            <a href="https://github.com/D4MPYO/Atomuklas" class="project-btn" target="_blank">
                                 <i class='bx bxl-github'></i>
                                 <span>Github</span>
                             </a>
@@ -720,7 +738,7 @@
 
                         <div class="project-links-label">Project Links</div>
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO" class="project-btn" target="_blank">
+                            <a href="https://github.com/D4MPYO/AnaphyMaster" class="project-btn" target="_blank">
                                 <i class='bx bxl-github'></i>
                                 <span>Github</span>
                             </a>
@@ -759,7 +777,7 @@
 
                         <div class="project-links-label">Project Links</div>
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO" class="project-btn" target="_blank">
+                            <a href="https://github.com/D4MPYO/PassCSE-Civil-Service-Reviewer-Application" class="project-btn" target="_blank">
                                 <i class='bx bxl-github'></i>
                                 <span>Github</span>
                             </a>
@@ -800,11 +818,11 @@
 
                         <div class="project-links-label">Project Links</div>
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO" class="project-btn" target="_blank">
+                            <a href="https://github.com/D4MPYO/Liham-Cafe-V.1" class="project-btn" target="_blank">
                                 <i class='bx bxl-github'></i>
                                 <span>Github</span>
                             </a>
-                            <a href="#" class="project-btn" target="_blank">
+                            <a href="https://d4mpyo.github.io/Liham-Cafe-V.1/" class="project-btn" target="_blank">
                                 <i class='bx bx-link-external'></i>
                                 <span>Live Link</span>
                             </a>
@@ -892,32 +910,73 @@
     <!-- Footer -->
     <footer class="footer">
         <div class="footer-gradient"></div>
+
+        <!-- Animated floating shapes -->
+        <div class="footer-shapes">
+            <div class="footer-shape footer-shape-1"></div>
+            <div class="footer-shape footer-shape-2"></div>
+            <div class="footer-shape footer-shape-3"></div>
+            <div class="footer-shape footer-shape-4"></div>
+            <div class="footer-shape footer-shape-5"></div>
+        </div>
+
         <div class="footer-content">
             <div class="section-container">
-                <h2 class="footer-title">Feel free to connect on social media.</h2>
+                <div class="footer-header-wrapper">
+                    <div class="footer-icon-wrapper">
+                        <i class='bx bx-code-alt'></i>
+                    </div>
+                    <h2 class="footer-title">Let's Connect & Create</h2>
+                    <p class="footer-subtitle">Feel free to reach out on social media</p>
+                </div>
 
                 <div class="footer-social">
-                    <a href="https://github.com/D4MPYO" class="link" target="_blank" aria-label="GitHub">
-                        <i class='bx bxl-github'></i>
-                    </a>
-                    <a href="https://www.linkedin.com/in/jonardgan" class="link" target="_blank" aria-label="LinkedIn">
+
+                    <a href="https://www.linkedin.com/in/jonardgan" class="link footer-social-link" target="_blank" aria-label="LinkedIn">
                         <i class='bx bxl-linkedin'></i>
+                        <span class="social-label">LinkedIn</span>
                     </a>
-                    <a href="https://web.facebook.com/nardyyy15" class="link" target="_blank" aria-label="Facebook">
+                    <a href="https://github.com/D4MPYO" class="link footer-social-link" target="_blank" aria-label="GitHub">
+                        <i class='bx bxl-github'></i>
+                        <span class="social-label">GitHub</span>
+                    </a>
+
+                    <a href="https://www.linkedin.com/in/jonardgan" class="link footer-social-link" target="_blank" aria-label="Email">
+                        <i class='bx bxl-gmail'></i>
+                        <span class="social-label">Gmail</span>
+                    </a>
+
+                    <a href="https://web.facebook.com/nardyyy15" class="link footer-social-link" target="_blank" aria-label="Facebook">
                         <i class='bx bxl-facebook'></i>
+                        <span class="social-label">Facebook</span>
                     </a>
-                    <a href="https://www.instagram.com/" class="link" target="_blank" aria-label="Instagram">
+                    <a href="https://www.instagram.com/" class="link footer-social-link" target="_blank" aria-label="Instagram">
                         <i class='bx bxl-instagram'></i>
+                        <span class="social-label">Instagram</span>
                     </a>
                 </div>
 
-                <a href="#contact" class="btn btn-secondary link footer-btn">Let's Talk</a>
-
-                <p class="footer-credits">
-                    Developed with <span class="heart">❤️</span> by <span class="text-gradient">Jonard Gan</span>
-                </p>
+                <div class="footer-cta">
+                    <p class="footer-cta-text">Got a project in mind?</p>
+                    <a href="#contact" class="btn btn-secondary link footer-btn">
+                        <span>Let's Talk</span>
+                        <i class='bx bx-right-arrow-alt'></i>
+                    </a>
+                </div>
             </div>
         </div>
+
+        <div class="footer-bottom">
+            <p class="footer-credits">
+                <span class="footer-year">© 2025</span> JoNard. All rights reserved.
+            </p>
+        </div>
+
+        <!-- Fixed Back to Top Button -->
+        <a href="#home" class="back-to-top-fixed link">
+            <i class='bx bx-up-arrow-alt'></i>
+        </a>
+
         <div class="footer-curve">
             <svg viewBox="0 0 1200 120" preserveAspectRatio="none">
                 <path d="M0,0V46.29c47.79,22.2,103.59,32.17,158,28,70.36-5.37,136.33-33.31,206.8-37.5C438.64,32.43,512.34,53.67,583,72.05c69.27,18,138.3,24.88,209.4,13.08,36.15-6,69.85-17.84,104.45-29.34C989.49,25,1113-14.29,1200,52.47V0Z" opacity=".25"></path>
@@ -928,9 +987,12 @@
     </footer>
 
     <!-- Scripts -->
+     <!-- Custom Cursor -->
+    <script src="assets/js/cursor.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="assets/js/gsap.min.js"></script>
-    <script src="assets/js/ScrollTrigger.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
     <script src="assets/js/script.js"></script>
+    
 </body>
 </html>
