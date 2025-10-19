@@ -39,8 +39,6 @@ class CustomCursor {
     }
 
     init() {
-        console.log('🚀 Initializing brick game spaceship cursor...');
-        
         // Create cursor elements
         this.createSpaceshipCursor();
         
@@ -58,8 +56,6 @@ class CustomCursor {
         
         // Start spawning falling objects
         this.spawnFallingObjects();
-        
-        console.log('✅ Spaceship cursor initialized with falling objects');
     }
 
     createSpaceshipCursor() {
@@ -459,7 +455,6 @@ class CustomCursor {
     shootLaser(x, y) {
         // Check particle limit to prevent lag
         if (this.currentParticleCount > this.maxParticles) {
-            console.log('⚠️ Particle limit reached - skipping to prevent lag');
             return;
         }
 
@@ -1038,8 +1033,6 @@ document.addEventListener('DOMContentLoaded', () => {
     // Only initialize on desktop (not mobile/tablet)
     if (window.innerWidth > 768) {
         new CustomCursor();
-        console.log('🎯 Custom cursor active on desktop');
     } else {
-        console.log('📱 Custom cursor disabled on mobile');
     }
 });

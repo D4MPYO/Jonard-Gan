@@ -1,20 +1,43 @@
 /* ===================================
-   DEVFOLIO-INSPIRED PORTFOLIO - JAVASCRIPT
+   PORTFOLIO - JAVASCRIPT
    Features: Custom Cursor, GSAP Animations,
-   Soundbar, Theme Toggle, Menu, Typed Effect
+   Soundbar, Theme Toggle, Menu
    ================================ */
+console.log(`
+██████╗░██╗░░░██╗██╗  ░░░░░██╗░█████╗░███╗░░██╗░█████╗░██████╗░██████╗░  ░██████╗░░█████╗░███╗░░██╗
+██╔══██╗╚██╗░██╔╝╚═╝  ░░░░░██║██╔══██╗████╗░██║██╔══██╗██╔══██╗██╔══██╗  ██╔════╝░██╔══██╗████╗░██║
+██████╦╝░╚████╔╝░░░░  ░░░░░██║██║░░██║██╔██╗██║███████║██████╔╝██║░░██║  ██║░░██╗░███████║██╔██╗██║
+██╔══██╗░░╚██╔╝░░░░░  ██╗░░██║██║░░██║██║╚████║██╔══██║██╔══██╗██║░░██║  ██║░░╚██╗██╔══██║██║╚████║
+██████╦╝░░░██║░░░██╗  ╚█████╔╝╚█████╔╝██║░╚███║██║░░██║██║░░██║██████╔╝  ╚██████╔╝██║░░██║██║░╚███║
+╚═════╝░░░░╚═╝░░░╚═╝  ░╚════╝░░╚════╝░╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝╚═════╝░  ░╚═════╝░╚═╝░░╚═╝╚═╝░░╚══╝`);
 
-// ===================================
-// Check if GSAP loaded
-// ===================================
-console.log('🎬 GSAP Status:', typeof gsap !== 'undefined' ? 'LOADED ✅' : 'FAILED ❌');
-if (typeof gsap !== 'undefined') {
-    console.log('📦 GSAP Version:', gsap.version);
-    gsap.registerPlugin(ScrollTrigger);
-    console.log('🔌 ScrollTrigger:', typeof ScrollTrigger !== 'undefined' ? 'REGISTERED ✅' : 'FAILED ❌');
-} else {
-    console.error('❌ GSAP NOT LOADED! Check assets/js/gsap.min.js');
-}
+console.log(`
+░██████╗███████╗██╗███████╗███████╗  ████████╗██╗░░██╗███████╗  ██████╗░░█████╗░██╗░░░██╗░░░
+██╔════╝██╔════╝██║╚════██║██╔════╝  ╚══██╔══╝██║░░██║██╔════╝  ██╔══██╗██╔══██╗╚██╗░██╔╝░░░
+╚█████╗░█████╗░░██║░░███╔═╝█████╗░░  ░░░██║░░░███████║█████╗░░  ██║░░██║███████║░╚████╔╝░░░░
+░╚═══██╗██╔══╝░░██║██╔══╝░░██╔══╝░░  ░░░██║░░░██╔══██║██╔══╝░░  ██║░░██║██╔══██║░░╚██╔╝░░░░░
+██████╔╝███████╗██║███████╗███████╗  ░░░██║░░░██║░░██║███████╗  ██████╔╝██║░░██║░░░██║░░░██╗
+╚═════╝░╚══════╝╚═╝╚══════╝╚══════╝  ░░░╚═╝░░░╚═╝░░╚═╝╚══════╝  ╚═════╝░╚═╝░░╚═╝░░░╚═╝░░░╚═╝
+
+███╗░░░███╗░█████╗░██╗░░██╗███████╗  ██╗░░░██╗░█████╗░██╗░░░██╗██████╗░  ██╗░░░░░██╗███████╗███████╗
+████╗░████║██╔══██╗██║░██╔╝██╔════╝  ╚██╗░██╔╝██╔══██╗██║░░░██║██╔══██╗  ██║░░░░░██║██╔════╝██╔════╝
+██╔████╔██║███████║█████═╝░█████╗░░  ░╚████╔╝░██║░░██║██║░░░██║██████╔╝  ██║░░░░░██║█████╗░░█████╗░░
+██║╚██╔╝██║██╔══██║██╔═██╗░██╔══╝░░  ░░╚██╔╝░░██║░░██║██║░░░██║██╔══██╗  ██║░░░░░██║██╔══╝░░██╔══╝░░
+██║░╚═╝░██║██║░░██║██║░╚██╗███████╗  ░░░██║░░░╚█████╔╝╚██████╔╝██║░░██║  ███████╗██║██║░░░░░███████╗
+╚═╝░░░░░╚═╝╚═╝░░╚═╝╚═╝░░╚═╝╚══════╝  ░░░╚═╝░░░░╚════╝░░╚═════╝░╚═╝░░╚═╝  ╚══════╝╚═╝╚═╝░░░░░╚══════╝
+
+███████╗██╗░░██╗████████╗██████╗░░█████╗░░█████╗░██████╗░██████╗░██╗███╗░░██╗░█████╗░██████╗░██╗░░░██╗░░░
+██╔════╝╚██╗██╔╝╚══██╔══╝██╔══██╗██╔══██╗██╔══██╗██╔══██╗██╔══██╗██║████╗░██║██╔══██╗██╔══██╗╚██╗░██╔╝░░░
+█████╗░░░╚███╔╝░░░░██║░░░██████╔╝███████║██║░░██║██████╔╝██║░░██║██║██╔██╗██║███████║██████╔╝░╚████╔╝░░░░
+██╔══╝░░░██╔██╗░░░░██║░░░██╔══██╗██╔══██║██║░░██║██╔══██╗██║░░██║██║██║╚████║██╔══██║██╔══██╗░░╚██╔╝░░░░░
+███████╗██╔╝╚██╗░░░██║░░░██║░░██║██║░░██║╚█████╔╝██║░░██║██████╔╝██║██║░╚███║██║░░██║██║░░██║░░░██║░░░██╗
+╚══════╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝░░╚═╝╚═╝░░╚═╝░╚════╝░╚═╝░░╚═╝╚═════╝░╚═╝╚═╝░░╚══╝╚═╝░░╚═╝╚═╝░░╚═╝░░░╚═╝░░░╚═╝
+`);
+
+console.log(`%c
+█░█ █▀█ █▀█ █▀▀   █▄█ █▀█ █░█   █░░ █ █▄▀ █▀▀   █░█░█ █░█ ▄▀█ ▀█▀   █▄█ █▀█ █░█   █▀ █▀▀ █▀▀   ▀ ▀▄
+█▀█ █▄█ █▀▀ ██▄   ░█░ █▄█ █▄█   █▄▄ █ █░█ ██▄   ▀▄▀▄▀ █▀█ █▀█ ░█░   ░█░ █▄█ █▄█   ▄█ ██▄ ██▄   ▄ ▄▀
+`, "color: #b794f4; font-size: 16px; font-weight: bold; font-style: italic;");
 
 
 // ===================================
@@ -51,33 +74,23 @@ class Menu {
         this.menuContent = document.querySelector('.menu-content');
         this.soundEffects = soundEffects;
 
-        console.log('🍔 Menu initialized');
-        console.log('   - Checkbox:', this.menuCheckbox ? '✅' : '❌');
-        console.log('   - Menu links:', this.menuLinks.length);
-        console.log('   - Menu content:', this.menuContent ? '✅' : '❌');
-
         this.init();
     }
 
     init() {
         if (!this.menuCheckbox || !this.menuContent) {
-            console.error('❌ Menu elements not found!');
             return;
         }
 
         // Animate menu content on open/close
         this.menuCheckbox.addEventListener('change', () => {
             this.soundEffects.playMenuSound();
-            console.log('🍔 Menu toggled:', this.menuCheckbox.checked ? 'OPEN' : 'CLOSED');
 
             if (this.menuCheckbox.checked) {
                 // Check if GSAP is available
                 if (typeof gsap === 'undefined') {
-                    console.error('❌ GSAP not available for menu animation!');
                     return;
                 }
-
-                console.log('🎬 Playing menu animation...');
 
                 // Menu opening - POP animation
                 gsap.fromTo(this.menuContent,
@@ -92,7 +105,6 @@ class Menu {
                         rotation: 0,
                         duration: 0.5,
                         ease: 'back.out(1.7)',
-                        onComplete: () => console.log('✅ Menu animation complete!')
                     }
                 );
 
@@ -112,7 +124,6 @@ class Menu {
         this.menuLinks.forEach(link => {
             link.addEventListener('click', () => {
                 this.soundEffects.playClickSound();
-                console.log('🔗 Menu link clicked:', link.textContent);
                 this.menuCheckbox.checked = false;
             });
         });
@@ -120,12 +131,9 @@ class Menu {
         // Close menu on Escape key
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.menuCheckbox.checked) {
-                console.log('⌨️ ESC pressed - closing menu');
                 this.menuCheckbox.checked = false;
             }
         });
-
-        console.log('✅ Menu event listeners attached');
     }
 }
 
@@ -186,7 +194,6 @@ class Soundbar {
                 this.soundbar.classList.remove('playing');
             } else {
                 this.audio.play().catch(err => {
-                    console.log('Audio play failed:', err);
                 });
                 this.soundbar.classList.add('playing');
             }
@@ -262,7 +269,6 @@ class TypedText {
 class Accordion {
     constructor() {
         this.accordionButtons = document.querySelectorAll('.accordion-button');
-        console.log('📋 Accordion initialized - Found', this.accordionButtons.length, 'buttons');
         this.init();
     }
 
@@ -277,11 +283,8 @@ class Accordion {
 
                 // Toggle the clicked item only (allow multiple items open)
                 accordionItem.classList.toggle('active');
-
-                console.log(`📋 Accordion item ${index + 1}: ${wasActive ? 'CLOSED' : 'OPENED'}`);
             });
         });
-        console.log('✅ Accordion event listeners attached');
     }
 }
 
@@ -468,8 +471,6 @@ class ScrollAnimations {
                 });
             });
         });
-
-        console.log('✅ Project cards GSAP animations initialized');
     }
 
     initAboutAnimations() {
@@ -540,8 +541,6 @@ class ScrollAnimations {
                 }
             });
         }
-
-        console.log('✅ About section animations initialized');
     }
 
     initCertificatesAnimations() {
@@ -637,7 +636,6 @@ class ScrollAnimations {
             });
         }
 
-        console.log('✅ Certificates section animations initialized');
     }
 
     initCollaborationAnimation() {
@@ -656,9 +654,6 @@ class ScrollAnimations {
                 }
             });
         }
-
-        // No GSAP animations for scrolling text - pure CSS animations handle it
-        console.log('✅ Collaboration section initialized with CSS animations');
     }
 }
 
@@ -810,11 +805,8 @@ class SkillsWheel {
 
     init() {
         if (!this.wheel || this.cards.length === 0) {
-            console.error('❌ Skills wheel elements not found!');
             return;
         }
-
-        console.log('🎡 Semi-circular wheel initialized with', this.cards.length, 'skills');
 
         // Position cards in a circle
         this.positionCards();
@@ -830,14 +822,12 @@ class SkillsWheel {
         window.addEventListener('resize', () => {
             clearTimeout(resizeTimeout);
             resizeTimeout = setTimeout(() => {
-                console.log('📐 Window resized - repositioning cards');
                 this.positionCards();
             }, 250);
         });
 
         // Start auto-spin after a short delay
         setTimeout(() => {
-            console.log('🚀 Starting auto-spin...');
             this.startAutoSpin();
         }, 500);
 
@@ -881,8 +871,6 @@ class SkillsWheel {
                 this.startInactivityTimer();
             }
         });
-
-        console.log(`🎡 Spinning to a random skill: ${randomCardIndex}`);
     }
 
     positionCards() {
@@ -903,8 +891,6 @@ class SkillsWheel {
             // Desktop - 1400px wheel = 700px radius / 2 = 350px usable
             radius = 550;
         }
-
-        console.log('🎡 Positioning cards with radius:', radius, 'px for screen width:', screenWidth, 'px');
 
         // FULL CIRCLE positioning - all 360 degrees
         const angleStep = (2 * Math.PI) / this.cards.length;
@@ -979,7 +965,6 @@ class SkillsWheel {
                 this.sphere.classList.add('is-active');
             }
 
-            console.log('🖱️ Drag started');
         };
 
         const onMouseMove = (e) => {
@@ -1028,8 +1013,6 @@ class SkillsWheel {
             if (this.sphere) {
                 this.sphere.classList.remove('is-active');
             }
-
-            console.log('🖱️ Drag ended - velocity:', this.velocity.toFixed(3));
 
             // Apply inertia/momentum
             if (Math.abs(this.velocity) > 0.001) {
@@ -1087,8 +1070,6 @@ class SkillsWheel {
                 this.snapToNearest();
             }
         });
-
-        console.log('🚀 Free-wheeling - spinning', totalRotation.toFixed(1), 'degrees (', (rotations.toFixed(1)), 'rotations) over', duration.toFixed(2), 's');
     }
 
     snapToNearest() {
@@ -1113,8 +1094,6 @@ class SkillsWheel {
                 this.playTickSound();
             }
         });
-
-        console.log('📍 Snapping to', nearestSnap, 'degrees');
     }
 
     detectActiveCard() {
@@ -1171,7 +1150,6 @@ class SkillsWheel {
 
             this.showDescription();
 
-            console.log('✨ Active skill:', skillName);
         } else {
             this.hideDescription();
         }
@@ -1238,7 +1216,6 @@ class SkillsWheel {
             this.autoSpinAnimation = requestAnimationFrame(spinStep);
         };
 
-        console.log('🔄 Auto-spin started');
         spinStep();
     }
 
@@ -1252,14 +1229,13 @@ class SkillsWheel {
             this.autoSpinAnimation = null;
         }
 
-        console.log('⏸️ Auto-spin stopped');
+
     }
 
     startInactivityTimer() {
         this.clearInactivityTimer();
 
         this.inactivityTimer = setTimeout(() => {
-            console.log('⏰ Inactivity detected - resuming auto-spin');
             this.startAutoSpin();
         }, this.inactivityDelay);
     }
@@ -1290,11 +1266,8 @@ class ParticleBackground {
 
     init() {
         if (!this.container || typeof THREE === 'undefined') {
-            console.error('❌ Three.js or container not found!');
             return;
         }
-
-        console.log('🌌 Initializing particle background...');
 
         // Set up scene
         this.scene = new THREE.Scene();
@@ -1329,7 +1302,6 @@ class ParticleBackground {
         // Start animation
         this.animate();
 
-        console.log('✅ Particle background initialized');
     }
 
     createParticles() {
@@ -1488,8 +1460,6 @@ document.addEventListener('DOMContentLoaded', () => {
         x: 0
     });
 
-    // Loading animation complete
-    console.log('Portfolio loaded successfully! ✨');
 });
 
 // ===================================
@@ -1508,11 +1478,8 @@ class CertificateLightbox {
 
     init() {
         if (!this.lightbox || !this.lightboxImage) {
-            console.error('❌ Lightbox elements not found!');
             return;
         }
-
-        console.log('🖼️ Certificate lightbox initialized');
 
         // Add click event to all certificate images
         this.certificateImages.forEach(imageContainer => {
@@ -1546,7 +1513,6 @@ class CertificateLightbox {
             }
         });
 
-        console.log('✅ Lightbox event listeners attached');
     }
 
     openLightbox(src, alt) {
@@ -1554,13 +1520,11 @@ class CertificateLightbox {
         this.lightboxImage.alt = alt;
         this.lightbox.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent scrolling
-        console.log('🖼️ Lightbox opened:', alt);
     }
 
     closeLightbox() {
         this.lightbox.classList.remove('active');
         document.body.style.overflow = ''; // Restore scrolling
-        console.log('🖼️ Lightbox closed');
     }
 }
 
@@ -1575,11 +1539,8 @@ class CollaborationAnimations {
 
     init() {
         if (!this.elements.length) {
-            console.log('⚠️ No collaboration elements found for animation');
             return;
         }
-
-        console.log('✨ Initializing collaboration animations');
 
         // Create IntersectionObserver for scroll animations
         const observerOptions = {
@@ -1591,7 +1552,6 @@ class CollaborationAnimations {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('animate-in');
-                    console.log('🎬 Animating:', entry.target.className);
                 }
             });
         }, observerOptions);
@@ -1600,8 +1560,6 @@ class CollaborationAnimations {
         this.elements.forEach(element => {
             observer.observe(element);
         });
-
-        console.log('✅ Collaboration animations initialized');
     }
 }
 
@@ -1620,11 +1578,8 @@ class ExperienceTabs {
 
     init() {
         if (!this.tabs.length || !this.cards.length || !this.container) {
-            console.log('⚠️ Experience tabs elements not found');
             return;
         }
-
-        console.log('🗂️ Initializing Experience Tabs');
 
         // Bind context for event handlers
         this.handleMouseEnter = this.handleMouseEnter.bind(this);
@@ -1640,8 +1595,6 @@ class ExperienceTabs {
                 this.handleTabClick(tab, index);
             });
         });
-
-        console.log('✅ Experience tabs initialized');
     }
 
     handleResize() {
@@ -1704,8 +1657,6 @@ class ExperienceTabs {
             // Update card positions
             this.updateCardOrder();
         }
-
-        console.log('📂 Switched to:', experienceType);
     }
 
     updateCardOrder() {
