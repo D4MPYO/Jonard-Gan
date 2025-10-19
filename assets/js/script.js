@@ -214,7 +214,7 @@ class TypedText {
             'Mobile Developer',
             'Web Developer',
             'Freelancer',
-            'Problem Solver'
+            'Coder'
         ];
         this.currentStringIndex = 0;
         this.currentCharIndex = 0;
