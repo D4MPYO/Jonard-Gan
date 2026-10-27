@@ -5,18 +5,24 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Portfolio | Jonard Gan</title>
     <meta name="description" content="Jonard Gan is a passionate Frontend Engineer, dedicated to crafting aesthetic and modern apps that captivate and engage users.">
-    <link rel="icon" type="image/png" href="Image/favCon.jpg">
+    <link rel="icon" type="image/png" href="Image/favCon.png">
+    <link rel="alternate icon" type="image/webp" href="Image/favCon.webp">
 
-    <!-- Fonts -->
+    <!-- Fonts & CDNs preconnect & dns-prefetch -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link rel="dns-prefetch" href="https://cdnjs.cloudflare.com">
+    <link rel="dns-prefetch" href="https://unpkg.com">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+
+    <!-- Preload Hero Portrait for Instant LCP -->
+    <link rel="preload" as="image" href="Image/BusinessAttire.webp" type="image/webp" fetchpriority="high">
 
     <!-- Icons -->
     <link href='https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css' rel='stylesheet'>
 
     <!-- Styles -->
-    <link rel="stylesheet" href="assets/css/style.css?v=6">
+    <link rel="stylesheet" href="assets/css/style.css?v=10">
 </head>
 <body>
     <!-- Particle Background -->
@@ -43,8 +49,8 @@
                     </div>
                 </div>
 
-                <audio id="background-music" src="assets/soundeffect/song.mp3" loop></audio>
-                <audio id="gear-click-sound" src="assets/soundeffect/gear-click.mp3"></audio>
+                <audio id="background-music" src="assets/soundeffect/song.mp3" loop preload="none"></audio>
+                <audio id="gear-click-sound" src="assets/soundeffect/gear-click.mp3" preload="none"></audio>
 
                 <!-- Theme Toggle -->
                 <button class="theme-toggle link" aria-label="Toggle Theme">
@@ -137,7 +143,7 @@
                     </div>
                 </div>
                 <div class="hero-image">
-                    <img src="Image/BusinessAttire.png" alt="Jonard Gan">
+                    <img src="Image/BusinessAttire.webp" alt="Jonard Gan" width="522" height="768" fetchpriority="high" loading="eager" decoding="async">
                 </div>
             </div>
         </div>
@@ -154,7 +160,7 @@
             <div class="about-content">
                 <div class="about-image-wrapper">
                     <div class="about-image">
-                        <img src="Image/mirror_photo.png" alt="Jonard Gan">
+                        <img src="Image/mirror_photo.webp" alt="Jonard Gan" width="800" height="1200" loading="lazy" decoding="async">
                     </div>
                     <!-- Contact Card -->
                     <div class="about-contact-card">
@@ -170,7 +176,7 @@
                             <i class='bx bxl-gmail'></i>
                             <span>jonardgan01@gmail.com</span>
                         </div>
-                       <a href="assets/Gan, Jonard CV 2025.pdf" class="download-cv-btn" target="_blank">View CV
+                       <a href="assets/Gan, Jonard CV 2026.pdf" class="download-cv-btn" target="_blank">View CV
                         </a>
 
                     </div>
@@ -222,7 +228,7 @@
                     </button>
                     <div class="accordion-content">
                         <p>
-                            I am currently in my 3rd year of pursuing a <strong>Bachelor of Science in Information Systems</strong> at 
+                            I am currently in my 4th year of pursuing a <strong>Bachelor of Science in Information Systems</strong> at 
                             <strong>Camarines Norte State College</strong>, where I became a <strong>Dean’s Lister for Academic Year 2024–2025</strong>.
                             My coursework includes subjects like programming, database management, and IT fundamentals, providing a strong foundation 
                             for my career in the tech field.
@@ -390,63 +396,261 @@
             </div>
 
             <div class="certificates-grid">
-                <!-- Certificate 1 -->
+                <!-- Certificate 1: Google Business Intelligence -->
                 <div class="certificate-card">
+                    <div class="certificate-meta-bar">
+                        <div class="cert-issuer-badge cert-issuer-google">
+                            <i class='bx bxl-google'></i>
+                            <span>Google</span>
+                        </div>
+                        <div class="cert-meta-right">
+                            <span class="cert-type-pill"><i class='bx bx-check-shield'></i> Professional Cert</span>
+                            <span class="cert-date"><i class='bx bx-calendar'></i> Oct 2026</span>
+                        </div>
+                    </div>
                     <div class="certificate-image">
-                        <img src="Image/Cert_1_Bicol IT Students Congress (BITSCON) 2024.png" alt="Certificate Title 1">
+                        <img src="Image/Cert_4_Google Business Intelligence.webp" alt="Google Business Intelligence Professional Certificate" width="1600" height="1236" loading="lazy" decoding="async">
                         <div class="certificate-overlay">
-                            <i class='bx bx-show'></i>
+                            <span class="cert-preview-pill link"><i class='bx bx-expand-alt'></i> Quick View</span>
+                        </div>
+                        <div class="certificate-badge">
+                            <i class='bx bx-award'></i>
+                        </div>
+                    </div>
+                    <div class="certificate-content">
+                        <div class="certificate-info">
+                            <h3 class="certificate-title">Google Business Intelligence Professional Certificate</h3>
+                            <p class="certificate-issuer"><i class='bx bx-buildings'></i> Authorized by Google &bull; Coursera</p>
+                            <p class="certificate-description">Comprehensive multi-course specialization covering data modeling, ETL pipelines, and executive dashboards to drive organizational decision-making.</p>
+                        </div>
+                        <div class="certificate-skills">
+                            <span class="cert-skill-tag"><i class='bx bx-data'></i> Business Intelligence</span>
+                            <span class="cert-skill-tag"><i class='bx bx-git-repo-forked'></i> Data Pipelines</span>
+                            <span class="cert-skill-tag"><i class='bx bx-line-chart'></i> Dashboards</span>
+                        </div>
+                        <div class="certificate-footer">
+                            <button type="button" class="cert-btn cert-btn-preview link" aria-label="Preview Google Business Intelligence Certificate">
+                                <i class='bx bx-show'></i> Preview
+                            </button>
+                            <a href="https://coursera.org/verify/professional-cert/O67ACGY1EPVW" target="_blank" rel="noopener noreferrer" class="cert-btn cert-btn-verify link" aria-label="Verify Google Business Intelligence Credential">
+                                <i class='bx bx-badge-check'></i> Verify
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate 2: Microsoft Power BI -->
+                <div class="certificate-card">
+                    <div class="certificate-meta-bar">
+                        <div class="cert-issuer-badge cert-issuer-microsoft">
+                            <i class='bx bxl-microsoft'></i>
+                            <span>Microsoft</span>
+                        </div>
+                        <div class="cert-meta-right">
+                            <span class="cert-type-pill"><i class='bx bx-check-shield'></i> Course Cert</span>
+                            <span class="cert-date"><i class='bx bx-calendar'></i> Oct 2026</span>
+                        </div>
+                    </div>
+                    <div class="certificate-image">
+                        <img src="Image/Cert_5_Harnessing the Power of Data with Power BI.webp" alt="Harnessing the Power of Data with Power BI" width="1600" height="1236" loading="lazy" decoding="async">
+                        <div class="certificate-overlay">
+                            <span class="cert-preview-pill link"><i class='bx bx-expand-alt'></i> Quick View</span>
+                        </div>
+                        <div class="certificate-badge">
+                            <i class='bx bx-award'></i>
+                        </div>
+                    </div>
+                    <div class="certificate-content">
+                        <div class="certificate-info">
+                            <h3 class="certificate-title">Harnessing the Power of Data with Power BI</h3>
+                            <p class="certificate-issuer"><i class='bx bx-buildings'></i> Authorized by Microsoft &bull; Coursera</p>
+                            <p class="certificate-description">Professional credential in end-to-end data transformation, DAX expressions, relational modeling, and high-impact business analytics reporting.</p>
+                        </div>
+                        <div class="certificate-skills">
+                            <span class="cert-skill-tag"><i class='bx bx-bar-chart-alt-2'></i> Power BI</span>
+                            <span class="cert-skill-tag"><i class='bx bx-code-curly'></i> DAX Queries</span>
+                            <span class="cert-skill-tag"><i class='bx bx-scatter-chart'></i> Data Modeling</span>
+                        </div>
+                        <div class="certificate-footer">
+                            <button type="button" class="cert-btn cert-btn-preview link" aria-label="Preview Power BI Certificate">
+                                <i class='bx bx-show'></i> Preview
+                            </button>
+                            <a href="https://coursera.org/verify/W1NRQPLQ9OBH" target="_blank" rel="noopener noreferrer" class="cert-btn cert-btn-verify link" aria-label="Verify Power BI Credential">
+                                <i class='bx bx-badge-check'></i> Verify
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate 3: Microsoft Excel -->
+                <div class="certificate-card">
+                    <div class="certificate-meta-bar">
+                        <div class="cert-issuer-badge cert-issuer-microsoft">
+                            <i class='bx bxl-microsoft'></i>
+                            <span>Microsoft</span>
+                        </div>
+                        <div class="cert-meta-right">
+                            <span class="cert-type-pill"><i class='bx bx-check-shield'></i> Course Cert</span>
+                            <span class="cert-date"><i class='bx bx-calendar'></i> Oct 2026</span>
+                        </div>
+                    </div>
+                    <div class="certificate-image">
+                        <img src="Image/Cert_6_Preparing Data for Analysis with Microsoft Excel.webp" alt="Preparing Data for Analysis with Microsoft Excel" width="1600" height="1236" loading="lazy" decoding="async">
+                        <div class="certificate-overlay">
+                            <span class="cert-preview-pill link"><i class='bx bx-expand-alt'></i> Quick View</span>
+                        </div>
+                        <div class="certificate-badge">
+                            <i class='bx bx-award'></i>
+                        </div>
+                    </div>
+                    <div class="certificate-content">
+                        <div class="certificate-info">
+                            <h3 class="certificate-title">Preparing Data for Analysis with Microsoft Excel</h3>
+                            <p class="certificate-issuer"><i class='bx bx-buildings'></i> Authorized by Microsoft &bull; Coursera</p>
+                            <p class="certificate-description">Advanced spreadsheet workflows, data sanitization, structural auditing, and logical formulas for data-driven analytics.</p>
+                        </div>
+                        <div class="certificate-skills">
+                            <span class="cert-skill-tag"><i class='bx bx-table'></i> Microsoft Excel</span>
+                            <span class="cert-skill-tag"><i class='bx bx-filter-alt'></i> Data Cleaning</span>
+                            <span class="cert-skill-tag"><i class='bx bx-analyse'></i> Data Analysis</span>
+                        </div>
+                        <div class="certificate-footer">
+                            <button type="button" class="cert-btn cert-btn-preview link" aria-label="Preview Excel Certificate">
+                                <i class='bx bx-show'></i> Preview
+                            </button>
+                            <a href="https://coursera.org/verify/35LI3HV415EM" target="_blank" rel="noopener noreferrer" class="cert-btn cert-btn-verify link" aria-label="Verify Excel Credential">
+                                <i class='bx bx-badge-check'></i> Verify
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate 4: BITSCON 2024 -->
+                <div class="certificate-card">
+                    <div class="certificate-meta-bar">
+                        <div class="cert-issuer-badge cert-issuer-academic">
+                            <i class='bx bx-award'></i>
+                            <span>CODITE – CHED V</span>
+                        </div>
+                        <div class="cert-meta-right">
+                            <span class="cert-type-pill"><i class='bx bx-check-shield'></i> Regional Event</span>
+                            <span class="cert-date"><i class='bx bx-calendar'></i> Apr 2024</span>
+                        </div>
+                    </div>
+                    <div class="certificate-image">
+                        <img src="Image/Cert_1_Bicol IT Students Congress (BITSCON) 2024.webp" alt="Bicol IT Students Congress (BITSCON) 2024" width="1122" height="794" loading="lazy" decoding="async">
+                        <div class="certificate-overlay">
+                            <span class="cert-preview-pill link"><i class='bx bx-expand-alt'></i> Quick View</span>
+                        </div>
+                        <div class="certificate-badge">
+                            <i class='bx bx-award'></i>
                         </div>
                     </div>
                     <div class="certificate-content">
                         <div class="certificate-info">
                             <h3 class="certificate-title">Bicol IT Students Congress (BITSCON) 2024</h3>
-                            <p class="certificate-issuer">Issued by: Council of Deans for Information Technology Education, Inc. (CODITE) – CHED Region V</p>
+                            <p class="certificate-issuer"><i class='bx bx-buildings'></i> Council of Deans for IT Education (CODITE) – CHED Region V</p>
+                            <p class="certificate-description">Recognition of active participation in regional computing congress focusing on innovative technology paradigms and IT leadership.</p>
                         </div>
-                        <p class="certificate-date">Date: April 2024</p>
-                    </div>
-                    <div class="certificate-badge">
-                        <i class='bx bx-award'></i>
+                        <div class="certificate-skills">
+                            <span class="cert-skill-tag"><i class='bx bx-chip'></i> IT Trends</span>
+                            <span class="cert-skill-tag"><i class='bx bx-group'></i> Leadership</span>
+                            <span class="cert-skill-tag"><i class='bx bx-compass'></i> Tech Congress</span>
+                        </div>
+                        <div class="certificate-footer">
+                            <button type="button" class="cert-btn cert-btn-preview link" aria-label="Preview BITSCON Certificate">
+                                <i class='bx bx-show'></i> Preview
+                            </button>
+                            <a href="Image/Cert_1_Bicol IT Students Congress (BITSCON) 2024.webp" target="_blank" rel="noopener noreferrer" class="cert-btn cert-btn-link link" aria-label="View Full BITSCON Certificate Image">
+                                <i class='bx bx-link-external'></i> View Full
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Certificate 2 -->
+                <!-- Certificate 5: dIScover UI/UX -->
                 <div class="certificate-card">
+                    <div class="certificate-meta-bar">
+                        <div class="cert-issuer-badge cert-issuer-academic">
+                            <i class='bx bx-palette'></i>
+                            <span>CNSC – ISSO</span>
+                        </div>
+                        <div class="cert-meta-right">
+                            <span class="cert-type-pill"><i class='bx bx-check-shield'></i> Workshop</span>
+                            <span class="cert-date"><i class='bx bx-calendar'></i> Mar 2024</span>
+                        </div>
+                    </div>
                     <div class="certificate-image">
-                        <img src="Image/Cert_2_dIScover Navigating Realms of UXUI Design.png" alt="Certificate Title 2">
+                        <img src="Image/Cert_2_dIScover Navigating Realms of UXUI Design.webp" alt="dIScover: Navigating Realms of UX/UI Design" width="1600" height="1131" loading="lazy" decoding="async">
                         <div class="certificate-overlay">
-                            <i class='bx bx-show'></i>
+                            <span class="cert-preview-pill link"><i class='bx bx-expand-alt'></i> Quick View</span>
+                        </div>
+                        <div class="certificate-badge">
+                            <i class='bx bx-award'></i>
                         </div>
                     </div>
                     <div class="certificate-content">
                         <div class="certificate-info">
                             <h3 class="certificate-title">dIScover: Navigating Realms of UX/UI Design</h3>
-                            <p class="certificate-issuer">Issued by: Camarines Norte State College – Information Systems Student Organization (ISSO)</p>
+                            <p class="certificate-issuer"><i class='bx bx-buildings'></i> Camarines Norte State College – ISSO</p>
+                            <p class="certificate-description">Specialized workshop covering user-centered interaction design, rapid wireframing, usability heuristics, and design system creation.</p>
                         </div>
-                        <p class="certificate-date">Date: March 2024</p>
-                    </div>
-                    <div class="certificate-badge">
-                        <i class='bx bx-award'></i>
+                        <div class="certificate-skills">
+                            <span class="cert-skill-tag"><i class='bx bx-layout'></i> UI/UX Design</span>
+                            <span class="cert-skill-tag"><i class='bx bx-window-alt'></i> Wireframing</span>
+                            <span class="cert-skill-tag"><i class='bx bx-user-check'></i> User Research</span>
+                        </div>
+                        <div class="certificate-footer">
+                            <button type="button" class="cert-btn cert-btn-preview link" aria-label="Preview UI/UX Certificate">
+                                <i class='bx bx-show'></i> Preview
+                            </button>
+                            <a href="Image/Cert_2_dIScover Navigating Realms of UXUI Design.webp" target="_blank" rel="noopener noreferrer" class="cert-btn cert-btn-link link" aria-label="View Full UI/UX Certificate Image">
+                                <i class='bx bx-link-external'></i> View Full
+                            </a>
+                        </div>
                     </div>
                 </div>
 
-                <!-- Certificate 3 -->
+                <!-- Certificate 6: IS WEB 3.0 -->
                 <div class="certificate-card">
+                    <div class="certificate-meta-bar">
+                        <div class="cert-issuer-badge cert-issuer-academic">
+                            <i class='bx bx-code-alt'></i>
+                            <span>CNSC – PRAXIS</span>
+                        </div>
+                        <div class="cert-meta-right">
+                            <span class="cert-type-pill"><i class='bx bx-check-shield'></i> Seminar</span>
+                            <span class="cert-date"><i class='bx bx-calendar'></i> May 2025</span>
+                        </div>
+                    </div>
                     <div class="certificate-image">
-                        <img src="Image/Cert_3_IS WEB 3.0 Exploring Innovations in Web Development.jpg" alt="Certificate Title 3">
+                        <img src="Image/Cert_3_IS WEB 3.0 Exploring Innovations in Web Development.webp" alt="IS WEB 3.0: Exploring Innovations in Web Development" width="1600" height="1124" loading="lazy" decoding="async">
                         <div class="certificate-overlay">
-                            <i class='bx bx-show'></i>
+                            <span class="cert-preview-pill link"><i class='bx bx-expand-alt'></i> Quick View</span>
+                        </div>
+                        <div class="certificate-badge">
+                            <i class='bx bx-award'></i>
                         </div>
                     </div>
                     <div class="certificate-content">
                         <div class="certificate-info">
                             <h3 class="certificate-title">IS WEB 3.0: Exploring Innovations in Web Development</h3>
-                            <p class="certificate-issuer">Issued by: Camarines Norte State College – Proficient Architects of Information Systems (PRAXIS)</p>
+                            <p class="certificate-issuer"><i class='bx bx-buildings'></i> Camarines Norte State College – PRAXIS</p>
+                            <p class="certificate-description">Technical seminar on modern web engineering frameworks, scalable frontend architectures, and emerging fullstack web paradigms.</p>
                         </div>
-                        <p class="certificate-date">Date: May 2025</p>
-                    </div>
-                    <div class="certificate-badge">
-                        <i class='bx bx-award'></i>
+                        <div class="certificate-skills">
+                            <span class="cert-skill-tag"><i class='bx bx-code-block'></i> Web Development</span>
+                            <span class="cert-skill-tag"><i class='bx bx-layer'></i> Architecture</span>
+                            <span class="cert-skill-tag"><i class='bx bx-globe'></i> Modern Web</span>
+                        </div>
+                        <div class="certificate-footer">
+                            <button type="button" class="cert-btn cert-btn-preview link" aria-label="Preview Web 3.0 Certificate">
+                                <i class='bx bx-show'></i> Preview
+                            </button>
+                            <a href="Image/Cert_3_IS WEB 3.0 Exploring Innovations in Web Development.webp" target="_blank" rel="noopener noreferrer" class="cert-btn cert-btn-link link" aria-label="View Full Web 3.0 Certificate Image">
+                                <i class='bx bx-link-external'></i> View Full
+                            </a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -455,11 +659,12 @@
 
     <!-- Certificate Lightbox -->
     <div class="certificate-lightbox" id="certificateLightbox">
-        <button class="lightbox-close" id="lightboxClose">
+        <button class="lightbox-close link" id="lightboxClose" aria-label="Close Preview">
             <i class='bx bx-x'></i>
         </button>
         <div class="lightbox-content">
             <img src="" alt="Certificate Preview" id="lightboxImage">
+            <p class="lightbox-caption" id="lightboxCaption"></p>
         </div>
     </div>
 
@@ -512,52 +717,52 @@
                         </svg>
 
                         <div class="skill-card" data-skill="HTML5" data-description="Proficient in semantic HTML5 markup. I build clean, accessible web structures with proper element hierarchy.">
-                            <img src="Image/SVG/html5.svg" alt="HTML5">
+                            <img src="Image/SVG/html5.svg" alt="HTML5" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="CSS3" data-description="Skilled in responsive design and modern CSS. I craft smooth animations and polished interfaces.">
-                            <img src="Image/SVG/css3.svg" alt="CSS3">
+                            <img src="Image/SVG/css3.svg" alt="CSS3" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="JavaScript" data-description="Comfortable with vanilla JavaScript. I handle DOM manipulation, form validation, and interactive features.">
-                            <img src="Image/SVG/JavaScript.svg" alt="JavaScript">
+                            <img src="Image/SVG/JavaScript.svg" alt="JavaScript" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Java" data-description="Experienced in Java for Android. I build mobile apps with intuitive UIs and efficient data handling.">
-                            <img src="Image/SVG/java.svg" alt="Java">
+                            <img src="Image/SVG/java.svg" alt="Java" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Android Studio" data-description="Proficient in Android Studio IDE. I develop mobile applications with layouts, activities, and integrated databases.">
-                            <img src="Image/SVG/android.svg" alt="Android Studio">
+                            <img src="Image/SVG/android.svg" alt="Android Studio" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Python" data-description="Familiar with Python programming. I use it for logic-based tasks and academic projects.">
-                            <img src="Image/SVG/python.svg" alt="Python">
+                            <img src="Image/SVG/python.svg" alt="Python" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="VS Code" data-description="My primary code editor. I leverage extensions, debugging tools, and Git integration daily.">
-                            <img src="Image/SVG/vscode.svg" alt="VS Code">
+                            <img src="Image/SVG/vscode.svg" alt="VS Code" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="PHP" data-description="Proficient in server-side PHP. I develop backend systems, handle databases, and build dynamic applications.">
-                            <img src="Image/SVG/php.svg" alt="PHP">
+                            <img src="Image/SVG/php.svg" alt="PHP" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="MySQL" data-description="Knowledgeable in database design. I create efficient structures and write optimized queries.">
-                            <img src="Image/SVG/mysql-logo-svgrepo-com.svg" alt="MySQL">
+                            <img src="Image/SVG/mysql-logo-svgrepo-com.svg" alt="MySQL" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Microsoft Office" data-description="Proficient with Office suite. I create documentation, presentations, and organize project data.">
-                            <img src="Image/SVG/Microsoft-365.svg" alt="Office">
+                            <img src="Image/SVG/Microsoft-365.svg" alt="Office" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Canva" data-description="Skilled at graphic design. I create branding materials and visual assets for presentations.">
-                            <img src="Image/SVG/canva.svg" alt="Canva">
+                            <img src="Image/SVG/canva.svg" alt="Canva" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="CapCut" data-description="Experienced in video editing. I create engaging demo videos with transitions and effects.">
-                            <img src="Image/SVG/capcut.svg" alt="Capcut">
+                            <img src="Image/SVG/capcut.svg" alt="Capcut" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Kotlin" data-description="Learning modern Android with Kotlin. I appreciate its concise syntax and null-safety features.">
-                            <img src="Image/SVG/kotlin.svg" alt="Kotlin">
+                            <img src="Image/SVG/kotlin.svg" alt="Kotlin" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="GitHub" data-description="Experienced with version control. I manage repositories and maintain clean project history.">
-                            <img src="Image/SVG/github.svg" alt="GitHub">
+                            <img src="Image/SVG/github.svg" alt="GitHub" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Firebase" data-description="Familiar with Firebase services. I integrate real-time databases, authentication, and cloud storage.">
-                            <img src="Image/SVG/firebase.svg" alt="Firebase">
+                            <img src="Image/SVG/firebase.svg" alt="Firebase" draggable="false">
                         </div>
                         <div class="skill-card" data-skill="Figma" data-description="Capable of UI/UX design. I create wireframes, mockups, and interactive prototypes.">
-                            <img src="Image/SVG/figma.svg" alt="Figma">
+                            <img src="Image/SVG/figma.svg" alt="Figma" draggable="false">
                         </div>
                     </div>
                 </div>
@@ -582,7 +787,7 @@
             <div class="projects-grid">
                 <!-- Project 1: VPES-SIMS (ONGOING) -->
                 <div class="project-card">
-                    <!-- Left: Browser Mockup -->
+                    <!-- Left: Modern Browser Mockup -->
                     <div class="project-browser">
                         <div class="browser-header">
                             <div class="browser-dots">
@@ -590,38 +795,57 @@
                                 <span></span>
                                 <span></span>
                             </div>
+                            <div class="browser-address">
+                                <i class='bx bx-lock-alt'></i>
+                                <span>vpes-portal.com</span>
+                            </div>
+                            <div class="browser-actions">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
                         </div>
-                        <div class="browser-content">
-                            <img src="Image/vpes.png" alt="VPES-SIMS" class="project-image">
-                        </div>
+                        <a href="https://vpes-portal.com//" class="browser-content link" target="_blank" rel="noopener noreferrer" aria-label="Visit VPES-SIMS Live Website">
+                            <img src="Image/vpes.webp" alt="VPES-SIMS - School Information Management System" class="project-image" width="1400" height="685" loading="lazy" decoding="async">
+                            <div class="browser-overlay">
+                                <span class="browser-overlay-btn"><i class='bx bx-link-external'></i> Live Preview</span>
+                            </div>
+                        </a>
                     </div>
 
                     <!-- Right: Project Info -->
                     <div class="project-info">
-                        <h3 class="project-title">VPES-SIMS <span class="project-badge">(ONGOING)</span></h3>
-                        <p class="project-overview">
-                            <strong>OVERVIEW:</strong> Developed a comprehensive web-based platform for managing student records, enrollment, and school operations at Vinzons Pilot Elementary School.
-                        </p>
-
-                        <!-- Tech Stack Icons -->
-                        <div class="project-stack">
-                            <img src="Image/SVG/php.svg" alt="PHP" title="PHP">
-                            <img src="Image/SVG/mysql-logo-svgrepo-com.svg" alt="MySQL" title="MySQL">
-                            <img src="Image/SVG/firebase.svg" alt="Firebase" title="Firebase">
-                            <img src="Image/SVG/html5.svg" alt="HTML5" title="HTML5">
-                            <img src="Image/SVG/css3.svg" alt="CSS3" title="CSS3">
-                            <img src="Image/SVG/JavaScript.svg" alt="JavaScript" title="JavaScript">
+                        <div class="project-meta">
+                            <span class="project-number">01</span>
+                            <span class="project-category">School Management Platform</span>
+                            <span class="project-status status-ongoing">
+                                <span class="status-dot"></span> In Development
+                            </span>
                         </div>
 
-                        <div class="project-links-label">Project Links</div>
+                        <h3 class="project-title">VPES-SIMS</h3>
+
+                        <p class="project-overview">
+                            Comprehensive web-based platform engineered for Vinzons Pilot Elementary School to modernize student records, enrollment workflows, and campus administrative operations.
+                        </p>
+
+                        <!-- Tech Stack Chips -->
+                        <div class="project-stack">
+                            <span class="tech-tag"><img src="Image/SVG/php.svg" alt="PHP"><span>PHP</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/mysql-logo-svgrepo-com.svg" alt="MySQL"><span>MySQL</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/firebase.svg" alt="Firebase"><span>Firebase</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/html5.svg" alt="HTML5"><span>HTML5</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/css3.svg" alt="CSS3"><span>CSS3</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/JavaScript.svg" alt="JavaScript"><span>JavaScript</span></span>
+                        </div>
+
+                        <!-- Action Buttons -->
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/VPES" class="project-btn" target="_blank">
-                                <i class='bx bxl-github'></i>
-                                <span>Github</span>
+                            <a href="https://vpes-portal.com//" class="project-btn project-btn-primary link" target="_blank" rel="noopener noreferrer">
+                                <span>Live Preview</span>
+                                <i class='bx bx-right-top-arrow-circle'></i>
                             </a>
-                            <a href="https://vpes-portal.com//" class="project-btn" target="_blank">
-                                <i class='bx bx-link-external'></i>
-                                <span>Live Link</span>
+                            <a href="https://github.com/D4MPYO/VPES" class="project-btn project-btn-secondary link" target="_blank" rel="noopener noreferrer">
+                                <i class='bx bxl-github'></i>
+                                <span>Source Code</span>
                             </a>
                         </div>
                     </div>
@@ -629,7 +853,7 @@
 
                 <!-- Project 2: Liham Cafe V2 -->
                 <div class="project-card">
-                    <!-- Left: Browser Mockup -->
+                    <!-- Left: Modern Browser Mockup -->
                     <div class="project-browser">
                         <div class="browser-header">
                             <div class="browser-dots">
@@ -637,37 +861,56 @@
                                 <span></span>
                                 <span></span>
                             </div>
+                            <div class="browser-address">
+                                <i class='bx bx-lock-alt'></i>
+                                <span>liham-cafe.github.io</span>
+                            </div>
+                            <div class="browser-actions">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
                         </div>
-                        <div class="browser-content">
-                            <img src="Image/Liham-cafe-v2.png" alt="Liham Cafe V2" class="project-image">
-                        </div>
+                        <a href="https://d4mpyo.github.io/Liham-Cafe-V.2/" class="browser-content link" target="_blank" rel="noopener noreferrer" aria-label="Visit Liham Cafe V2 Live Website">
+                            <img src="Image/Liham-cafe-v2.webp" alt="Liham Cafe V2 - Modern Coffee Shop Website" class="project-image" width="1400" height="700" loading="lazy" decoding="async">
+                            <div class="browser-overlay">
+                                <span class="browser-overlay-btn"><i class='bx bx-link-external'></i> Live Preview</span>
+                            </div>
+                        </a>
                     </div>
 
                     <!-- Right: Project Info -->
                     <div class="project-info">
-                        <h3 class="project-title">LIHAM CAFE V2</h3>
-                        <p class="project-overview">
-                            <strong>OVERVIEW:</strong> Coffee shop website with improved UI/UX design, dynamic menu system, and responsive layout for seamless user experience.
-                        </p>
-
-                        <!-- Tech Stack Icons -->
-                        <div class="project-stack">
-                            <img src="Image/SVG/php.svg" alt="PHP" title="PHP">
-                            <img src="Image/SVG/mysql-logo-svgrepo-com.svg" alt="MySQL" title="MySQL">
-                            <img src="Image/SVG/html5.svg" alt="HTML5" title="HTML5">
-                            <img src="Image/SVG/css3.svg" alt="CSS3" title="CSS3">
-                            <img src="Image/SVG/JavaScript.svg" alt="JavaScript" title="JavaScript">
+                        <div class="project-meta">
+                            <span class="project-number">02</span>
+                            <span class="project-category">Web Experience & E-Menu</span>
+                            <span class="project-status status-live">
+                                <span class="status-dot"></span> Live Site
+                            </span>
                         </div>
 
-                        <div class="project-links-label">Project Links</div>
+                        <h3 class="project-title">Liham Cafe V2</h3>
+
+                        <p class="project-overview">
+                            Modern coffee shop digital platform featuring an enhanced UI/UX, dynamic interactive menu system, and responsive layout crafted for smooth customer discovery.
+                        </p>
+
+                        <!-- Tech Stack Chips -->
+                        <div class="project-stack">
+                            <span class="tech-tag"><img src="Image/SVG/php.svg" alt="PHP"><span>PHP</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/mysql-logo-svgrepo-com.svg" alt="MySQL"><span>MySQL</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/html5.svg" alt="HTML5"><span>HTML5</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/css3.svg" alt="CSS3"><span>CSS3</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/JavaScript.svg" alt="JavaScript"><span>JavaScript</span></span>
+                        </div>
+
+                        <!-- Action Buttons -->
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/Liham-Cafe" class="project-btn" target="_blank"> 
-                                <i class='bx bxl-github'></i>
-                                <span>Github</span>
+                            <a href="https://d4mpyo.github.io/Liham-Cafe-V.2/" class="project-btn project-btn-primary link" target="_blank" rel="noopener noreferrer">
+                                <span>Live Preview</span>
+                                <i class='bx bx-right-top-arrow-circle'></i>
                             </a>
-                            <a href="https://d4mpyo.github.io/Liham-Cafe-V.2/" class="project-btn" target="_blank">
-                                <i class='bx bx-link-external'></i>
-                                <span>Live Link</span>
+                            <a href="https://github.com/D4MPYO/Liham-Cafe" class="project-btn project-btn-secondary link" target="_blank" rel="noopener noreferrer"> 
+                                <i class='bx bxl-github'></i>
+                                <span>Source Code</span>
                             </a>
                         </div>
                     </div>
@@ -675,6 +918,7 @@
 
                 <!-- Project 3: Atomuklas -->
                 <div class="project-card">
+                    <!-- Left: Modern Browser Mockup -->
                     <div class="project-browser">
                         <div class="browser-header">
                             <div class="browser-dots">
@@ -682,34 +926,53 @@
                                 <span></span>
                                 <span></span>
                             </div>
+                            <div class="browser-address">
+                                <i class='bx bx-lock-alt'></i>
+                                <span>atomuklas.netlify.app</span>
+                            </div>
+                            <div class="browser-actions">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
                         </div>
-                        <div class="browser-content">
-                            <img src="Image/atomuklas.png" alt="Atomuklas" class="project-image">
-                        </div>
+                        <a href="https://atomuklas.netlify.app/" class="browser-content link" target="_blank" rel="noopener noreferrer" aria-label="Visit Atomuklas Showcase">
+                            <img src="Image/atomuklas.webp" alt="Atomuklas - Science Learning Android Application" class="project-image" width="1400" height="709" loading="lazy" decoding="async">
+                            <div class="browser-overlay">
+                                <span class="browser-overlay-btn"><i class='bx bx-link-external'></i> Live Preview</span>
+                            </div>
+                        </a>
                     </div>
 
+                    <!-- Right: Project Info -->
                     <div class="project-info">
-                        <h3 class="project-title">ATOMUKLAS</h3>
-                            <p class="project-overview">
-                                <strong>OVERVIEW:</strong> Atomuklas is a science-focused Android app developed for student clients as part of their educational research project. 
-                                The app provides comprehensive lessons on atomic structure, interactive 3D atomic models for visual learning, and engaging quiz games that reinforce key concepts. 
-                                I was responsible for designing the user interface, managing content flow, and integrating dynamic quizzes with real-time feedback to support both individual and classroom learning experiences.
-                            </p>
-
-                        <div class="project-stack">
-                            <img src="Image/SVG/java.svg" alt="Java" title="Java">
-                            <img src="Image/SVG/kotlin.svg" alt="Kotlin" title="Kotlin">
+                        <div class="project-meta">
+                            <span class="project-number">03</span>
+                            <span class="project-category">Educational 3D Android App</span>
+                            <span class="project-status status-client">
+                                <span class="status-dot"></span> Client Project
+                            </span>
                         </div>
 
-                        <div class="project-links-label">Project Links</div>
+                        <h3 class="project-title">Atomuklas</h3>
+
+                        <p class="project-overview">
+                            Science-learning Android mobile application featuring modular chemistry lessons, interactive 3D visual models, and gamified quizzes with instant feedback for student research clients.
+                        </p>
+
+                        <!-- Tech Stack Chips -->
+                        <div class="project-stack">
+                            <span class="tech-tag"><img src="Image/SVG/java.svg" alt="Java"><span>Java</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/kotlin.svg" alt="Kotlin"><span>Kotlin</span></span>
+                        </div>
+
+                        <!-- Action Buttons -->
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/Atomuklas-Application" class="project-btn" target="_blank">
-                                <i class='bx bxl-github'></i>
-                                <span>Github</span>
+                            <a href="https://atomuklas.netlify.app/" class="project-btn project-btn-primary link" target="_blank" rel="noopener noreferrer">
+                                <span>Live Preview</span>
+                                <i class='bx bx-right-top-arrow-circle'></i>
                             </a>
-                            <a href="https://atomuklas.netlify.app/" class="project-btn" target="_blank">
-                                <i class='bx bx-link-external'></i>
-                                <span>Live Link</span>
+                            <a href="https://github.com/D4MPYO/Atomuklas-Application" class="project-btn project-btn-secondary link" target="_blank" rel="noopener noreferrer">
+                                <i class='bx bxl-github'></i>
+                                <span>Source Code</span>
                             </a>
                         </div>
                     </div>
@@ -717,6 +980,7 @@
 
                 <!-- Project 4: AnaphyMaster -->
                 <div class="project-card">
+                    <!-- Left: Modern Browser Mockup -->
                     <div class="project-browser">
                         <div class="browser-header">
                             <div class="browser-dots">
@@ -724,35 +988,53 @@
                                 <span></span>
                                 <span></span>
                             </div>
+                            <div class="browser-address">
+                                <i class='bx bx-lock-alt'></i>
+                                <span>anaphymaster.netlify.app</span>
+                            </div>
+                            <div class="browser-actions">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
                         </div>
-                        <div class="browser-content">
-                            <img src="Image/anaphymasters.png" alt="AnaphyMaster" class="project-image">
-                        </div>
+                        <a href="https://anaphymaster.netlify.app/" class="browser-content link" target="_blank" rel="noopener noreferrer" aria-label="Visit AnaphyMaster Showcase">
+                            <img src="Image/anaphymasters.webp" alt="AnaphyMaster - Human Anatomy & Physiology Mobile App" class="project-image" width="1400" height="710" loading="lazy" decoding="async">
+                            <div class="browser-overlay">
+                                <span class="browser-overlay-btn"><i class='bx bx-link-external'></i> Live Preview</span>
+                            </div>
+                        </a>
                     </div>
 
+                    <!-- Right: Project Info -->
                     <div class="project-info">
-                        <h3 class="project-title">ANAPHYMASTER</h3>
-                            <p class="project-overview">
-                                <strong>OVERVIEW:</strong> AnaphyMaster is a mobile application developed for student clients as part of their research project focused on human anatomy and physiology. 
-                                The app helps students review and master key topics through categorized multiple-choice quizzes, a user-friendly interface, and result-based feedback to track learning progress. 
-                                I managed the full development cycle from UI/UX design and question structuring to logic implementation and performance feedback to create a focused and accessible review tool for students in the medical and allied health fields.
-                            </p>
-
-
-                        <div class="project-stack">
-                            <img src="Image/SVG/java.svg" alt="Java" title="Java">
-                            <img src="Image/SVG/kotlin.svg" alt="Kotlin" title="Kotlin">
+                        <div class="project-meta">
+                            <span class="project-number">04</span>
+                            <span class="project-category">Medical Science Reviewer</span>
+                            <span class="project-status status-client">
+                                <span class="status-dot"></span> Client Project
+                            </span>
                         </div>
 
-                        <div class="project-links-label">Project Links</div>
+                        <h3 class="project-title">AnaphyMaster</h3>
+
+                        <p class="project-overview">
+                            Specialized mobile learning companion for Human Anatomy and Physiology students, delivering categorized multiple-choice reviews, diagnostic tracking, and streamlined study flows.
+                        </p>
+
+                        <!-- Tech Stack Chips -->
+                        <div class="project-stack">
+                            <span class="tech-tag"><img src="Image/SVG/java.svg" alt="Java"><span>Java</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/kotlin.svg" alt="Kotlin"><span>Kotlin</span></span>
+                        </div>
+
+                        <!-- Action Buttons -->
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/AnaphyMaster-App" class="project-btn" target="_blank">
-                                <i class='bx bxl-github'></i>
-                                <span>Github</span>
+                            <a href="https://anaphymaster.netlify.app/" class="project-btn project-btn-primary link" target="_blank" rel="noopener noreferrer">
+                                <span>Live Preview</span>
+                                <i class='bx bx-right-top-arrow-circle'></i>
                             </a>
-                            <a href="https://anaphymaster.netlify.app/" class="project-btn" target="_blank">
-                                <i class='bx bx-link-external'></i>
-                                <span>Live Link</span>
+                            <a href="https://github.com/D4MPYO/AnaphyMaster-App" class="project-btn project-btn-secondary link" target="_blank" rel="noopener noreferrer">
+                                <i class='bx bxl-github'></i>
+                                <span>Source Code</span>
                             </a>
                         </div>
                     </div>
@@ -760,6 +1042,7 @@
 
                 <!-- Project 5: PassCSE -->
                 <div class="project-card">
+                    <!-- Left: Modern Browser Mockup -->
                     <div class="project-browser">
                         <div class="browser-header">
                             <div class="browser-dots">
@@ -767,31 +1050,52 @@
                                 <span></span>
                                 <span></span>
                             </div>
+                            <div class="browser-address">
+                                <i class='bx bx-lock-alt'></i>
+                                <span>passcse.netlify.app</span>
+                            </div>
+                            <div class="browser-actions">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
                         </div>
-                        <div class="browser-content">
-                            <img src="Image/sample.png" alt="PassCSE" class="project-image">
-                        </div>
+                        <a href="https://passcse.netlify.app/" class="browser-content link" target="_blank" rel="noopener noreferrer" aria-label="Visit PassCSE Showcase">
+                            <img src="Image/sample.webp" alt="PassCSE - Civil Service Reviewer App" class="project-image" width="1400" height="763" loading="lazy" decoding="async">
+                            <div class="browser-overlay">
+                                <span class="browser-overlay-btn"><i class='bx bx-link-external'></i> Live Preview</span>
+                            </div>
+                        </a>
                     </div>
 
+                    <!-- Right: Project Info -->
                     <div class="project-info">
-                        <h3 class="project-title">PASSCSE</h3>
-                        <p class="project-overview">
-                            <strong>OVERVIEW:</strong> Mobile reviewer app for Civil Service Exam preparation. Features timed assessments, randomized questions, and comprehensive score tracking.
-                        </p>
-
-                        <div class="project-stack">
-                            <img src="Image/SVG/java.svg" alt="Java" title="Java">
+                        <div class="project-meta">
+                            <span class="project-number">05</span>
+                            <span class="project-category">Exam Review Platform</span>
+                            <span class="project-status status-app">
+                                <span class="status-dot"></span> Android App
+                            </span>
                         </div>
 
-                        <div class="project-links-label">Project Links</div>
+                        <h3 class="project-title">PassCSE</h3>
+
+                        <p class="project-overview">
+                            Civil Service Examination mobile preparation app featuring randomized question banks, timed mock exam simulations, and comprehensive historical score tracking.
+                        </p>
+
+                        <!-- Tech Stack Chips -->
+                        <div class="project-stack">
+                            <span class="tech-tag"><img src="Image/SVG/java.svg" alt="Java"><span>Java</span></span>
+                        </div>
+
+                        <!-- Action Buttons -->
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/PassCSE-Civil-Service-Reviewer-Application" class="project-btn" target="_blank">
-                                <i class='bx bxl-github'></i>
-                                <span>Github</span>
+                            <a href="https://passcse.netlify.app/" class="project-btn project-btn-primary link" target="_blank" rel="noopener noreferrer">
+                                <span>Live Preview</span>
+                                <i class='bx bx-right-top-arrow-circle'></i>
                             </a>
-                            <a href="https://passcse.netlify.app/" class="project-btn" target="_blank">
-                                <i class='bx bx-link-external'></i>
-                                <span>Live Link</span>
+                            <a href="https://github.com/D4MPYO/PassCSE-Civil-Service-Reviewer-Application" class="project-btn project-btn-secondary link" target="_blank" rel="noopener noreferrer">
+                                <i class='bx bxl-github'></i>
+                                <span>Source Code</span>
                             </a>
                         </div>
                     </div>
@@ -799,6 +1103,7 @@
 
                 <!-- Project 6: Liham Cafe V1 -->
                 <div class="project-card">
+                    <!-- Left: Modern Browser Mockup -->
                     <div class="project-browser">
                         <div class="browser-header">
                             <div class="browser-dots">
@@ -806,33 +1111,54 @@
                                 <span></span>
                                 <span></span>
                             </div>
+                            <div class="browser-address">
+                                <i class='bx bx-lock-alt'></i>
+                                <span>liham-cafe-v1.github.io</span>
+                            </div>
+                            <div class="browser-actions">
+                                <i class='bx bx-dots-horizontal-rounded'></i>
+                            </div>
                         </div>
-                        <div class="browser-content">
-                            <img src="Image/Liham-cafe-v1.png" alt="Liham Cafe V1" class="project-image">
-                        </div>
+                        <a href="https://d4mpyo.github.io/Liham-Cafe-V.1/" class="browser-content link" target="_blank" rel="noopener noreferrer" aria-label="Visit Liham Cafe V1 Live Website">
+                            <img src="Image/Liham-cafe-v1.webp" alt="Liham Cafe V1 - Brand Website" class="project-image" width="1400" height="705" loading="lazy" decoding="async">
+                            <div class="browser-overlay">
+                                <span class="browser-overlay-btn"><i class='bx bx-link-external'></i> Live Preview</span>
+                            </div>
+                        </a>
                     </div>
 
+                    <!-- Right: Project Info -->
                     <div class="project-info">
-                        <h3 class="project-title">LIHAM CAFE V1</h3>
-                        <p class="project-overview">
-                            <strong>OVERVIEW:</strong> First version of Liham Cafe website. A simple, elegant coffee shop website featuring menu showcase, location info, and contact details.
-                        </p>
-
-                        <div class="project-stack">
-                            <img src="Image/SVG/html5.svg" alt="HTML5" title="HTML5">
-                            <img src="Image/SVG/css3.svg" alt="CSS3" title="CSS3">
-                            <img src="Image/SVG/JavaScript.svg" alt="JavaScript" title="JavaScript">
+                        <div class="project-meta">
+                            <span class="project-number">06</span>
+                            <span class="project-category">Brand Landing Page</span>
+                            <span class="project-status status-archived">
+                                <span class="status-dot"></span> Foundation V1
+                            </span>
                         </div>
 
-                        <div class="project-links-label">Project Links</div>
+                        <h3 class="project-title">Liham Cafe V1</h3>
+
+                        <p class="project-overview">
+                            The initial foundational web presence for Liham Cafe, highlighting artisan handcrafted beverages, warm cafe story, physical store directions, and customer contact details.
+                        </p>
+
+                        <!-- Tech Stack Chips -->
+                        <div class="project-stack">
+                            <span class="tech-tag"><img src="Image/SVG/html5.svg" alt="HTML5"><span>HTML5</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/css3.svg" alt="CSS3"><span>CSS3</span></span>
+                            <span class="tech-tag"><img src="Image/SVG/JavaScript.svg" alt="JavaScript"><span>JavaScript</span></span>
+                        </div>
+
+                        <!-- Action Buttons -->
                         <div class="project-buttons">
-                            <a href="https://github.com/D4MPYO/Liham-Cafe-V.1" class="project-btn" target="_blank">
-                                <i class='bx bxl-github'></i>
-                                <span>Github</span>
+                            <a href="https://d4mpyo.github.io/Liham-Cafe-V.1/" class="project-btn project-btn-primary link" target="_blank" rel="noopener noreferrer">
+                                <span>Live Preview</span>
+                                <i class='bx bx-right-top-arrow-circle'></i>
                             </a>
-                            <a href="https://d4mpyo.github.io/Liham-Cafe-V.1/" class="project-btn" target="_blank">
-                                <i class='bx bx-link-external'></i>
-                                <span>Live Link</span>
+                            <a href="https://github.com/D4MPYO/Liham-Cafe-V.1" class="project-btn project-btn-secondary link" target="_blank" rel="noopener noreferrer">
+                                <i class='bx bxl-github'></i>
+                                <span>Source Code</span>
                             </a>
                         </div>
                     </div>
@@ -995,12 +1321,12 @@
     </footer>
 
     <!-- Scripts -->
-     <!-- Custom Cursor -->
-    <script src="assets/js/cursor.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-    <script src="assets/js/script.js"></script>
+    <!-- Custom Cursor -->
+    <script defer src="assets/js/cursor.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script defer src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+    <script defer src="assets/js/script.js"></script>
     
 </body>
 </html>

@@ -2,66 +2,86 @@
    CUSTOM CURSOR - BRICK GAME SPACESHIP STYLE
    Features: Pixelated spaceship, trailing effect,
    shoot animation on click, retro gaming aesthetic
+   Optimized: Batched RAF loop, event delegation, zero MutationObserver
    ================================ */
 
 class CustomCursor {
     constructor() {
         this.cursor = null;
         this.spaceship = null;
-        this.trail = [];
-        this.maxTrailLength = 8;
-        this.shootParticles = [];
+        this.particlesContainer = null;
         
-        this.mouseX = 0;
-        this.mouseY = 0;
-        this.cursorX = 0;
-        this.cursorY = 0;
+        this.particles = [];
+        this.maxParticles = 60;
+        
+        this.mouseX = -100;
+        this.mouseY = -100;
+        this.cursorX = -100;
+        this.cursorY = -100;
         
         this.isHovering = false;
         this.isDragging = false;
         this.isClicking = false;
         this.isDamaged = false;
         this.isInvulnerable = false;
+        this.isVisible = false;
+        this.rafId = null;
         
-        // Performance optimization
+        // Cooldowns and limits
         this.lastShootTime = 0;
-        this.shootCooldown = 200;
-        this.maxParticles = 80;
-        this.currentParticleCount = 0;
+        this.shootCooldown = 180;
         
         // Falling bricks/rocks system
         this.fallingObjects = [];
         this.maxFallingObjects = 3;
-        this.lastSpawnTime = 0;
         this.spawnInterval = 3000;
+        this.spawnTimer = null;
+        
+        // Motion preference
+        this.reducedMotion = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
         
         this.init();
     }
 
     init() {
-        // Create cursor elements
         this.createSpaceshipCursor();
-        
-        // Hide default cursor
-        this.hideDefaultCursor();
-        
-        // Track mouse movement
+        this.injectStyles();
         this.trackMouse();
-        
-        // Add interactive states
         this.addInteractiveStates();
         
         // Start animation loop
-        this.animate();
+        this.animate = this.animate.bind(this);
+        this.rafId = requestAnimationFrame(this.animate);
         
-        // Start spawning falling objects
-        this.spawnFallingObjects();
+        // Spawn falling objects only if not reduced motion
+        if (!this.reducedMotion) {
+            this.spawnFallingObjects();
+        }
+
+        // Listen for visibility change to pause RAF when tab is hidden
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                if (this.rafId) {
+                    cancelAnimationFrame(this.rafId);
+                    this.rafId = null;
+                }
+            } else if (!this.rafId && window.innerWidth > 768) {
+                this.rafId = requestAnimationFrame(this.animate);
+            }
+        });
     }
 
     createSpaceshipCursor() {
+        // Dedicated container for cursor particles to isolate DOM changes
+        this.particlesContainer = document.createElement('div');
+        this.particlesContainer.className = 'spaceship-particles-container';
+        this.particlesContainer.setAttribute('aria-hidden', 'true');
+        document.body.appendChild(this.particlesContainer);
+
         // Main cursor container
         this.cursor = document.createElement('div');
         this.cursor.className = 'spaceship-cursor';
+        this.cursor.setAttribute('aria-hidden', 'true');
         
         // Spaceship element (pixelated brick game style)
         this.spaceship = document.createElement('div');
@@ -69,32 +89,26 @@ class CustomCursor {
         this.spaceship.innerHTML = `
             <svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
                 <!-- Spaceship body (brick game style) -->
-                <!-- Top tip -->
                 <rect x="14" y="4" width="4" height="4" fill="#9f55ff" class="ship-body"/>
                 
-                <!-- Upper body -->
                 <rect x="10" y="8" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 <rect x="14" y="8" width="4" height="4" fill="#9f55ff" class="ship-body"/>
                 <rect x="18" y="8" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 
-                <!-- Mid body -->
                 <rect x="10" y="12" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 <rect x="14" y="12" width="4" height="4" fill="#9f55ff" class="ship-body"/>
                 <rect x="18" y="12" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 
-                <!-- Wings -->
                 <rect x="6" y="16" width="4" height="4" fill="#7000ff" class="ship-body"/>
                 <rect x="10" y="16" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 <rect x="14" y="16" width="4" height="4" fill="#9f55ff" class="ship-body"/>
                 <rect x="18" y="16" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 <rect x="22" y="16" width="4" height="4" fill="#7000ff" class="ship-body"/>
                 
-                <!-- Engine base -->
                 <rect x="10" y="20" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 <rect x="14" y="20" width="4" height="4" fill="#9f55ff" class="ship-body"/>
                 <rect x="18" y="20" width="4" height="4" fill="#8b31ff" class="ship-body"/>
                 
-                <!-- Engine flames (animated) -->
                 <rect x="10" y="24" width="4" height="4" fill="#ff6b00" class="flame flame-1"/>
                 <rect x="14" y="24" width="4" height="4" fill="#ff9500" class="flame flame-2"/>
                 <rect x="18" y="24" width="4" height="4" fill="#ff6b00" class="flame flame-3"/>
@@ -107,17 +121,26 @@ class CustomCursor {
         
         this.cursor.appendChild(this.spaceship);
         document.body.appendChild(this.cursor);
-        
-        // Add cursor styles
-        this.injectStyles();
     }
 
     injectStyles() {
         const style = document.createElement('style');
+        style.id = 'spaceship-cursor-styles';
         style.textContent = `
-            /* Hide default cursor */
-            * {
+            /* Hide cursor only on pointer-interactive and main elements (avoids * selector) */
+            body, a, button, input, textarea, select, label, .link, [role="button"], .theme-toggle, .hamburger {
                 cursor: none !important;
+            }
+
+            .spaceship-particles-container {
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                pointer-events: none;
+                z-index: 99997;
+                overflow: hidden;
             }
 
             /* Spaceship cursor container */
@@ -127,19 +150,30 @@ class CustomCursor {
                 left: 0;
                 pointer-events: none;
                 z-index: 99999;
-                transform: translate(-50%, -50%);
+                will-change: transform;
+                opacity: 0;
+                transition: opacity 0.2s ease;
+            }
+
+            .spaceship-cursor.is-visible {
+                opacity: 1;
             }
 
             /* Spaceship SVG */
             .spaceship {
-                position: fixed;
+                position: absolute;
+                top: 0;
+                left: 0;
                 width: 32px;
                 height: 32px;
-                transform: translate(-50%, -50%) rotate(-15deg);
+                margin-left: -16px;
+                margin-top: -16px;
+                transform: rotate(-15deg);
                 filter: drop-shadow(0 0 8px rgba(159, 85, 255, 0.6));
                 image-rendering: pixelated;
                 image-rendering: -moz-crisp-edges;
                 image-rendering: crisp-edges;
+                transition: transform 0.15s ease-out, filter 0.15s ease-out;
             }
 
             /* Damaged state - red blink effect */
@@ -152,24 +186,14 @@ class CustomCursor {
             }
 
             @keyframes damageFlash {
-                0%, 100% {
-                    fill: #ff0000;
-                }
-                50% {
-                    fill: #ffffff;
-                }
+                0%, 100% { fill: #ff0000; }
+                50% { fill: #ffffff; }
             }
 
             @keyframes damageShake {
-                0%, 100% {
-                    transform: translate(-50%, -50%) rotate(-15deg);
-                }
-                25% {
-                    transform: translate(-48%, -50%) rotate(-20deg);
-                }
-                75% {
-                    transform: translate(-52%, -50%) rotate(-10deg);
-                }
+                0%, 100% { transform: rotate(-15deg); }
+                25% { transform: translate(-2px, 0) rotate(-20deg); }
+                75% { transform: translate(2px, 0) rotate(-10deg); }
             }
 
             /* Invulnerable state - flashing effect */
@@ -178,28 +202,19 @@ class CustomCursor {
             }
 
             @keyframes invulnerableFlash {
-                0%, 100% {
-                    opacity: 1;
-                }
-                50% {
-                    opacity: 0.3;
-                }
+                0%, 100% { opacity: 1; }
+                50% { opacity: 0.3; }
             }
 
             /* Engine flame animation */
             @keyframes flameFlicker {
-                0%, 100% {
-                    opacity: 1;
-                    transform: scaleY(1);
-                }
-                50% {
-                    opacity: 0.7;
-                    transform: scaleY(0.8);
-                }
+                0%, 100% { opacity: 1; transform: scaleY(1); }
+                50% { opacity: 0.7; transform: scaleY(0.8); }
             }
 
             .flame {
                 animation: flameFlicker 0.15s infinite;
+                transform-origin: center top;
             }
 
             .flame-1 { animation-delay: 0s; }
@@ -211,19 +226,17 @@ class CustomCursor {
 
             /* Trail particle */
             .trail-particle {
-                position: fixed;
+                position: absolute;
                 width: 12px;
                 height: 12px;
                 background: linear-gradient(135deg, #ff55ff, #9f55ff, #8b31ff);
                 border-radius: 2px;
                 pointer-events: none;
-                z-index: 99998;
-                transform: translate(-50%, -50%);
                 image-rendering: pixelated;
                 box-shadow: 0 0 12px rgba(255, 85, 255, 0.9), 0 0 6px rgba(139, 49, 255, 0.6);
+                will-change: transform, opacity;
             }
 
-            /* Damaged trail - red smoke */
             .trail-particle.damaged-trail {
                 background: linear-gradient(135deg, #ff0000, #ff4444, #cc0000);
                 box-shadow: 0 0 12px rgba(255, 0, 0, 0.9), 0 0 6px rgba(204, 0, 0, 0.6);
@@ -231,112 +244,84 @@ class CustomCursor {
 
             /* Shoot particle (laser beam) */
             .shoot-particle {
-                position: fixed;
+                position: absolute;
                 width: 6px;
                 height: 20px;
                 background: linear-gradient(180deg, #ffffff, #ff55ff, #9f55ff);
                 border-radius: 2px;
                 pointer-events: none;
-                z-index: 99997;
-                transform: translate(-50%, -50%);
                 image-rendering: pixelated;
                 box-shadow: 0 0 16px rgba(255, 85, 255, 1), 0 0 8px rgba(255, 255, 255, 0.8);
-                animation: laserPulse 0.1s infinite;
-            }
-
-            @keyframes laserPulse {
-                0%, 100% {
-                    opacity: 1;
-                    box-shadow: 0 0 16px rgba(255, 85, 255, 1), 0 0 8px rgba(255, 255, 255, 0.8);
-                }
-                50% {
-                    opacity: 0.9;
-                    box-shadow: 0 0 20px rgba(255, 85, 255, 1), 0 0 12px rgba(255, 255, 255, 1);
-                }
+                will-change: transform;
             }
 
             /* Explosion effect */
             .explosion-particle {
-                position: fixed;
+                position: absolute;
                 width: 10px;
                 height: 10px;
                 background: linear-gradient(135deg, #ffffff, #ffff00, #ff9500);
                 border-radius: 2px;
                 pointer-events: none;
-                z-index: 99997;
-                transform: translate(-50%, -50%);
                 image-rendering: pixelated;
                 box-shadow: 0 0 12px rgba(255, 149, 0, 1), 0 0 6px rgba(255, 255, 255, 0.8);
+                will-change: transform, opacity;
             }
 
             /* Falling brick/rock */
             .falling-object {
-                position: fixed;
+                position: absolute;
                 width: 24px;
                 height: 24px;
                 pointer-events: none;
                 z-index: 99996;
                 image-rendering: pixelated;
-                transition: none;
-                cursor: none !important;
+                will-change: transform;
             }
 
-            /* Brick destroyed animation */
             .falling-object.destroyed {
                 animation: brickDestroy 0.3s ease-out forwards;
             }
 
             @keyframes brickDestroy {
-                0% {
-                    transform: scale(1) rotate(0deg);
-                    opacity: 1;
-                }
-                100% {
-                    transform: scale(0) rotate(360deg);
-                    opacity: 0;
-                }
+                0% { transform: scale(1) rotate(0deg); opacity: 1; }
+                100% { transform: scale(0) rotate(360deg); opacity: 0; }
             }
 
-            /* Hover state - spaceship grows */
+            /* Hover state */
             .spaceship-cursor.hovering .spaceship {
-                transform: translate(-50%, -50%) rotate(-15deg) scale(1.2);
+                transform: rotate(-15deg) scale(1.2);
                 filter: drop-shadow(0 0 12px rgba(255, 85, 255, 0.8));
             }
 
-            /* Clicking state - spaceship tilts more */
+            /* Clicking state */
             .spaceship-cursor.clicking .spaceship {
-                transform: translate(-50%, -50%) rotate(-25deg) scale(0.9);
+                transform: rotate(-25deg) scale(0.9);
             }
 
-            /* Dragging state - spaceship rotates */
+            /* Dragging state */
             .spaceship-cursor.dragging .spaceship {
                 animation: spaceshipTilt 0.3s ease-in-out infinite alternate;
             }
 
             @keyframes spaceshipTilt {
-                from {
-                    transform: translate(-50%, -50%) rotate(-25deg);
-                }
-                to {
-                    transform: translate(-50%, -50%) rotate(-5deg);
-                }
+                from { transform: rotate(-25deg); }
+                to { transform: rotate(-5deg); }
             }
 
             /* Light theme adjustments */
             body.light-theme .spaceship svg rect:not(.flame) {
-                filter: brightness(0.8);
+                filter: brightness(0.85);
             }
 
-            /* Hide cursor on mobile */
-            @media (max-width: 768px) {
+            /* Hide cursor on mobile or touch */
+            @media (max-width: 768px), (pointer: coarse) {
                 .spaceship-cursor,
-                .trail-particle,
-                .shoot-particle,
-                .explosion-particle {
+                .spaceship-particles-container,
+                .falling-object {
                     display: none !important;
                 }
-                
-                * {
+                body, a, button, input, textarea, select, label, .link, [role="button"], .theme-toggle, .hamburger {
                     cursor: auto !important;
                 }
             }
@@ -344,26 +329,22 @@ class CustomCursor {
         document.head.appendChild(style);
     }
 
-    hideDefaultCursor() {
-        document.body.style.cursor = 'none';
-    }
-
     trackMouse() {
-        // Track mouse position
         document.addEventListener('mousemove', (e) => {
             this.mouseX = e.clientX;
             this.mouseY = e.clientY;
-        });
-
-        // Click effect - SHOOT LASER! (with cooldown to prevent lag)
-        document.addEventListener('mousedown', (e) => {
-            const currentTime = Date.now();
             
-            // Check cooldown to prevent spam lag
-            if (currentTime - this.lastShootTime < this.shootCooldown) {
-                return; // Skip if cooling down
+            if (!this.isVisible) {
+                this.isVisible = true;
+                this.cursor.classList.add('is-visible');
             }
-            
+        }, { passive: true });
+
+        document.addEventListener('mousedown', (e) => {
+            const currentTime = performance.now();
+            if (currentTime - this.lastShootTime < this.shootCooldown) {
+                return;
+            }
             this.lastShootTime = currentTime;
             this.isClicking = true;
             this.cursor.classList.add('clicking');
@@ -375,543 +356,42 @@ class CustomCursor {
             this.cursor.classList.remove('clicking');
         });
 
-        // Detect when leaving window
         document.addEventListener('mouseleave', () => {
-            this.cursor.style.opacity = '0';
+            this.isVisible = false;
+            this.cursor.classList.remove('is-visible');
         });
 
         document.addEventListener('mouseenter', () => {
-            this.cursor.style.opacity = '1';
+            this.isVisible = true;
+            this.cursor.classList.add('is-visible');
         });
-    }
-
-    takeDamage() {
-        if (this.isInvulnerable || this.isDamaged) return;
-        
-        this.isDamaged = true;
-        this.cursor.classList.add('damaged');
-        
-        // Create impact explosion at cursor position
-        this.createDamageExplosion(this.cursorX, this.cursorY);
-        
-        // Remove damaged state after animation (0.6s for 6 blinks)
-        setTimeout(() => {
-            this.isDamaged = false;
-            this.cursor.classList.remove('damaged');
-            
-            // Start invulnerability period (1.5 seconds)
-            this.isInvulnerable = true;
-            this.cursor.classList.add('invulnerable');
-            
-            setTimeout(() => {
-                this.isInvulnerable = false;
-                this.cursor.classList.remove('invulnerable');
-            }, 1500);
-        }, 600);
-    }
-
-    createDamageExplosion(x, y) {
-        // Red explosion effect when hit
-        for (let i = 0; i < 12; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'explosion-particle';
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            particle.style.background = 'linear-gradient(135deg, #ff0000, #ff4444, #cc0000)';
-            particle.style.boxShadow = '0 0 12px rgba(255, 0, 0, 1), 0 0 6px rgba(255, 255, 255, 0.8)';
-            document.body.appendChild(particle);
-            this.currentParticleCount++;
-
-            const angle = (Math.PI * 2 * i) / 12;
-            const speed = 4 + Math.random() * 4;
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
-
-            let px = x;
-            let py = y;
-            let life = 25;
-
-            const animateParticle = () => {
-                px += vx;
-                py += vy;
-                life--;
-
-                particle.style.left = `${px}px`;
-                particle.style.top = `${py}px`;
-                particle.style.opacity = life / 25;
-
-                if (life > 0) {
-                    requestAnimationFrame(animateParticle);
-                } else {
-                    particle.remove();
-                    this.currentParticleCount--;
-                }
-            };
-
-            animateParticle();
-        }
-    }
-
-    shootLaser(x, y) {
-        // Check particle limit to prevent lag
-        if (this.currentParticleCount > this.maxParticles) {
-            return;
-        }
-
-        // Create only 1 laser beam for better performance
-        const laser = document.createElement('div');
-        laser.className = 'shoot-particle';
-        const laserX = x;
-        laser.style.left = `${laserX}px`;
-        laser.style.top = `${y}px`;
-        document.body.appendChild(laser);
-        this.currentParticleCount++;
-
-        // Animate laser shooting upward
-        let laserY = y;
-        const speed = 22;
-        let hasHit = false;
-        
-        const animateLaser = () => {
-            laserY -= speed;
-            laser.style.top = `${laserY}px`;
-            
-            // Check collision with falling objects
-            if (!hasHit && this.checkLaserCollision(laserX, laserY)) {
-                hasHit = true;
-                laser.remove();
-                this.currentParticleCount--;
-                return;
-            }
-            
-            // Remove when off screen
-            if (laserY < -50) {
-                laser.remove();
-                this.currentParticleCount--;
-            } else {
-                requestAnimationFrame(animateLaser);
-            }
-        };
-        
-        animateLaser();
-
-        // Remove laser after animation (shorter timeout)
-        setTimeout(() => {
-            if (laser.parentElement) {
-                laser.remove();
-                this.currentParticleCount--;
-            }
-        }, 400);
-
-        // Create smaller click explosion (reduced particles)
-        this.createClickExplosion(x, y);
-    }
-
-    createClickExplosion(x, y) {
-        // Check particle limit
-        if (this.currentParticleCount > this.maxParticles - 10) {
-            return; // Skip explosion if near limit
-        }
-
-        // Create only 6 explosion particles (reduced from 12)
-        for (let i = 0; i < 6; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'explosion-particle';
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            particle.style.width = '8px';
-            particle.style.height = '8px';
-            document.body.appendChild(particle);
-            this.currentParticleCount++;
-
-            // Random direction for each particle
-            const angle = (Math.PI * 2 * i) / 6;
-            const speed = 3 + Math.random() * 3;
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
-
-            let px = x;
-            let py = y;
-            let life = 15; // Shorter life
-
-            const animateParticle = () => {
-                px += vx;
-                py += vy;
-                life--;
-
-                particle.style.left = `${px}px`;
-                particle.style.top = `${py}px`;
-                particle.style.opacity = life / 15;
-
-                if (life > 0) {
-                    requestAnimationFrame(animateParticle);
-                } else {
-                    particle.remove();
-                    this.currentParticleCount--;
-                }
-            };
-
-            animateParticle();
-        }
-
-        // Add smaller central flash
-        const flash = document.createElement('div');
-        flash.className = 'explosion-particle';
-        flash.style.left = `${x}px`;
-        flash.style.top = `${y}px`;
-        flash.style.width = '20px';
-        flash.style.height = '20px';
-        flash.style.background = 'linear-gradient(135deg, #ffffff, #ffff00)';
-        flash.style.boxShadow = '0 0 20px rgba(255, 255, 255, 1)';
-        document.body.appendChild(flash);
-        this.currentParticleCount++;
-
-        let flashScale = 1.2;
-        let flashOpacity = 1;
-
-        const animateFlash = () => {
-            flashScale += 0.4;
-            flashOpacity -= 0.2;
-
-            flash.style.transform = `translate(-50%, -50%) scale(${flashScale})`;
-            flash.style.opacity = flashOpacity;
-
-            if (flashOpacity > 0) {
-                requestAnimationFrame(animateFlash);
-            } else {
-                flash.remove();
-                this.currentParticleCount--;
-            }
-        };
-
-        animateFlash();
-    }
-
-    createExplosion(x, y) {
-        // Check particle limit
-        if (this.currentParticleCount > this.maxParticles) {
-            return;
-        }
-
-        // Create 12 explosion particles instead of 16 (performance optimization)
-        for (let i = 0; i < 12; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'explosion-particle';
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            document.body.appendChild(particle);
-            this.currentParticleCount++;
-
-            // Random direction for each particle
-            const angle = (Math.PI * 2 * i) / 12;
-            const speed = 4 + Math.random() * 4;
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
-
-            let px = x;
-            let py = y;
-            let life = 25;
-            let scale = 1;
-
-            const animateParticle = () => {
-                px += vx;
-                py += vy;
-                life--;
-                scale -= 0.04;
-
-                particle.style.left = `${px}px`;
-                particle.style.top = `${py}px`;
-                particle.style.opacity = life / 25;
-                particle.style.transform = `translate(-50%, -50%) scale(${scale})`;
-
-                if (life > 0 && scale > 0) {
-                    requestAnimationFrame(animateParticle);
-                } else {
-                    particle.remove();
-                    this.currentParticleCount--;
-                }
-            };
-
-            animateParticle();
-        }
-
-        // Add central flash effect
-        const flash = document.createElement('div');
-        flash.className = 'explosion-particle';
-        flash.style.left = `${x}px`;
-        flash.style.top = `${y}px`;
-        flash.style.width = '25px';
-        flash.style.height = '25px';
-        flash.style.background = 'linear-gradient(135deg, #ffffff, #ffff00)';
-        flash.style.boxShadow = '0 0 30px rgba(255, 255, 255, 1)';
-        document.body.appendChild(flash);
-        this.currentParticleCount++;
-
-        let flashScale = 1.5;
-        let flashOpacity = 1;
-
-        const animateFlash = () => {
-            flashScale += 0.3;
-            flashOpacity -= 0.15;
-
-            flash.style.transform = `translate(-50%, -50%) scale(${flashScale})`;
-            flash.style.opacity = flashOpacity;
-
-            if (flashOpacity > 0) {
-                requestAnimationFrame(animateFlash);
-            } else {
-                flash.remove();
-                this.currentParticleCount--;
-            }
-        };
-
-        animateFlash();
-    }
-
-    // Falling objects system
-    spawnFallingObjects() {
-        setInterval(() => {
-            // Strict limit enforcement before spawning
-            if (this.fallingObjects.length < this.maxFallingObjects) {
-                this.createFallingObject();
-            }
-            
-            // Extra cleanup - remove any excess objects
-            while (this.fallingObjects.length > this.maxFallingObjects) {
-                const removed = this.fallingObjects.shift();
-                if (removed && removed.element && removed.element.parentElement) {
-                    removed.element.remove();
-                }
-            }
-        }, this.spawnInterval);
-    }
-
-    createFallingObject() {
-        const object = document.createElement('div');
-        object.className = 'falling-object';
-        
-        // Random horizontal position
-        const x = Math.random() * window.innerWidth;
-        const y = -50;
-        
-        object.style.left = `${x}px`;
-        object.style.top = `${y}px`;
-        
-        // Create pixelated brick/rock SVG
-        const brickType = Math.random() > 0.5 ? 'brick' : 'rock';
-        const colors = brickType === 'brick' 
-            ? ['#8b4513', '#a0522d', '#6b3410'] // Brown brick colors
-            : ['#808080', '#696969', '#505050']; // Gray rock colors
-        
-        object.innerHTML = `
-            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-                ${brickType === 'brick' ? `
-                    <!-- Brick pattern -->
-                    <rect x="0" y="0" width="24" height="8" fill="${colors[0]}"/>
-                    <rect x="2" y="2" width="20" height="4" fill="${colors[1]}"/>
-                    <rect x="0" y="8" width="12" height="8" fill="${colors[0]}"/>
-                    <rect x="12" y="8" width="12" height="8" fill="${colors[0]}"/>
-                    <rect x="2" y="10" width="8" height="4" fill="${colors[1]}"/>
-                    <rect x="14" y="10" width="8" height="4" fill="${colors[1]}"/>
-                    <rect x="0" y="16" width="24" height="8" fill="${colors[0]}"/>
-                    <rect x="2" y="18" width="20" height="4" fill="${colors[1]}"/>
-                ` : `
-                    <!-- Rock pattern (irregular) -->
-                    <rect x="4" y="0" width="16" height="4" fill="${colors[0]}"/>
-                    <rect x="0" y="4" width="20" height="4" fill="${colors[1]}"/>
-                    <rect x="2" y="8" width="20" height="8" fill="${colors[0]}"/>
-                    <rect x="4" y="16" width="16" height="4" fill="${colors[1]}"/>
-                    <rect x="8" y="20" width="12" height="4" fill="${colors[2]}"/>
-                `}
-            </svg>
-        `;
-        
-        document.body.appendChild(object);
-        
-        // Store object data
-        const objectData = {
-            element: object,
-            x: x,
-            y: y,
-            velocityY: 2 + Math.random() * 2,
-            rotation: 0,
-            rotationSpeed: (Math.random() - 0.5) * 4,
-            destroyed: false
-        };
-        
-        this.fallingObjects.push(objectData);
-    }
-
-    updateFallingObjects() {
-        // Clean up destroyed objects first
-        this.fallingObjects = this.fallingObjects.filter(obj => {
-            if (!obj.destroyed && obj.element && obj.element.parentElement) {
-                return true;
-            }
-            // Remove orphaned elements
-            if (obj.element && obj.element.parentElement) {
-                obj.element.remove();
-            }
-            return false;
-        });
-
-        // Strict limit enforcement
-        while (this.fallingObjects.length > this.maxFallingObjects) {
-            const removed = this.fallingObjects.shift();
-            if (removed && removed.element && removed.element.parentElement) {
-                removed.element.remove();
-            }
-        }
-
-        for (let i = this.fallingObjects.length - 1; i >= 0; i--) {
-            const obj = this.fallingObjects[i];
-            
-            if (obj.destroyed) continue;
-            
-            // Update position
-            obj.y += obj.velocityY;
-            obj.rotation += obj.rotationSpeed;
-            
-            if (obj.element && obj.element.parentElement) {
-                obj.element.style.top = `${obj.y}px`;
-                obj.element.style.transform = `rotate(${obj.rotation}deg)`;
-            }
-            
-            // Check collision with cursor (spaceship gets hit!)
-            if (!this.isInvulnerable && !this.isDamaged) {
-                const dx = this.cursorX - obj.x;
-                const dy = this.cursorY - obj.y;
-                const distance = Math.sqrt(dx * dx + dy * dy);
-                
-                // If brick hits spaceship (within 25px radius)
-                if (distance < 25) {
-                    this.takeDamage();
-                    this.destroyFallingObject(obj, i);
-                    continue;
-                }
-            }
-            
-            // Remove if off screen (bottom)
-            if (obj.y > window.innerHeight + 50) {
-                if (obj.element && obj.element.parentElement) {
-                    obj.element.remove();
-                }
-                this.fallingObjects.splice(i, 1);
-            }
-        }
-    }
-
-    checkLaserCollision(laserX, laserY) {
-        for (let i = this.fallingObjects.length - 1; i >= 0; i--) {
-            const obj = this.fallingObjects[i];
-            
-            if (obj.destroyed) continue;
-            
-            // Simple collision detection (distance check)
-            const dx = laserX - obj.x;
-            const dy = laserY - obj.y;
-            const distance = Math.sqrt(dx * dx + dy * dy);
-            
-            // If laser is close to brick (within 30px radius)
-            if (distance < 30) {
-                this.destroyFallingObject(obj, i);
-                return true;
-            }
-        }
-        return false;
-    }
-
-    destroyFallingObject(obj, index) {
-        if (!obj || obj.destroyed) return;
-        
-        obj.destroyed = true;
-        
-        if (obj.element && obj.
-        element.parentElement) {
-            obj.element.classList.add('destroyed');
-            
-            // Create explosion at brick position
-            this.createBrickExplosion(obj.x, obj.y);
-            
-            // Remove from DOM after animation
-            setTimeout(() => {
-                if (obj.element && obj.element.parentElement) {
-                    obj.element.remove();
-                }
-                // Remove from array if still exists
-                const idx = this.fallingObjects.indexOf(obj);
-                if (idx > -1) {
-                    this.fallingObjects.splice(idx, 1);
-                }
-            }, 300);
-        } else {
-            // Already removed, just clean up array
-            const idx = this.fallingObjects.indexOf(obj);
-            if (idx > -1) {
-                this.fallingObjects.splice(idx, 1);
-            }
-        }
-    }
-
-    createBrickExplosion(x, y) {
-        // Smaller explosion for brick destruction
-        for (let i = 0; i < 8; i++) {
-            const particle = document.createElement('div');
-            particle.className = 'explosion-particle';
-            particle.style.left = `${x}px`;
-            particle.style.top = `${y}px`;
-            particle.style.width = '6px';
-            particle.style.height = '6px';
-            document.body.appendChild(particle);
-            this.currentParticleCount++;
-
-            const angle = (Math.PI * 2 * i) / 8;
-            const speed = 3 + Math.random() * 3;
-            const vx = Math.cos(angle) * speed;
-            const vy = Math.sin(angle) * speed;
-
-            let px = x;
-            let py = y;
-            let life = 20;
-
-            const animateParticle = () => {
-                px += vx;
-                py += vy;
-                life--;
-
-                particle.style.left = `${px}px`;
-                particle.style.top = `${py}px`;
-                particle.style.opacity = life / 20;
-
-                if (life > 0) {
-                    requestAnimationFrame(animateParticle);
-                } else {
-                    particle.remove();
-                    this.currentParticleCount--;
-                }
-            };
-
-            animateParticle();
-        }
     }
 
     addInteractiveStates() {
-        // Hover effects for clickable elements
-        const interactiveElements = document.querySelectorAll('a, button, .link, input, textarea, .skill-card, .project-btn, .certificate-image, .experience-tab');
+        // High-performance event delegation replaces per-element listeners and MutationObserver!
+        const interactiveSelector = 'a, button, .link, input, textarea, select, .skill-card, .sphere, .project-btn, .certificate-image, .experience-tab, .menu-link, label, [role="button"]';
 
-        interactiveElements.forEach(el => {
-            el.addEventListener('mouseenter', () => {
-                this.isHovering = true;
-                this.cursor.classList.add('hovering');
-            });
+        document.addEventListener('mouseover', (e) => {
+            if (e.target && e.target.closest && e.target.closest(interactiveSelector)) {
+                if (!this.isHovering) {
+                    this.isHovering = true;
+                    this.cursor.classList.add('hovering');
+                }
+            }
+        }, { passive: true });
 
-            el.addEventListener('mouseleave', () => {
-                this.isHovering = false;
-                this.cursor.classList.remove('hovering');
-            });
-        });
+        document.addEventListener('mouseout', (e) => {
+            if (e.target && e.target.closest && e.target.closest(interactiveSelector)) {
+                // If leaving the interactive boundary
+                const related = e.relatedTarget;
+                if (!related || !related.closest || !related.closest(interactiveSelector)) {
+                    this.isHovering = false;
+                    this.cursor.classList.remove('hovering');
+                }
+            }
+        }, { passive: true });
 
-        // Detect dragging on skills wheel
+        // Wheel drag detection
         const skillsWheel = document.getElementById('skillsWheel');
         if (skillsWheel) {
             skillsWheel.addEventListener('mousedown', () => {
@@ -926,113 +406,349 @@ class CustomCursor {
                 }
             });
         }
+    }
 
-        // Listen for dynamically added elements (like menu links)
-        const observer = new MutationObserver(() => {
-            const newElements = document.querySelectorAll('.menu-link');
-            newElements.forEach(el => {
-                el.addEventListener('mouseenter', () => {
-                    this.isHovering = true;
-                    this.cursor.classList.add('hovering');
-                });
+    takeDamage() {
+        if (this.isInvulnerable || this.isDamaged) return;
+        
+        this.isDamaged = true;
+        this.cursor.classList.add('damaged');
+        this.createDamageExplosion(this.cursorX, this.cursorY);
+        
+        setTimeout(() => {
+            this.isDamaged = false;
+            this.cursor.classList.remove('damaged');
+            
+            this.isInvulnerable = true;
+            this.cursor.classList.add('invulnerable');
+            
+            setTimeout(() => {
+                this.isInvulnerable = false;
+                this.cursor.classList.remove('invulnerable');
+            }, 1500);
+        }, 600);
+    }
 
-                el.addEventListener('mouseleave', () => {
-                    this.isHovering = false;
-                    this.cursor.classList.remove('hovering');
-                });
+    createDamageExplosion(x, y) {
+        for (let i = 0; i < 10; i++) {
+            if (this.particles.length >= this.maxParticles) break;
+            const el = document.createElement('div');
+            el.className = 'explosion-particle';
+            el.style.background = 'linear-gradient(135deg, #ff0000, #ff4444, #cc0000)';
+            el.style.boxShadow = '0 0 12px rgba(255, 0, 0, 1), 0 0 6px rgba(255, 255, 255, 0.8)';
+            this.particlesContainer.appendChild(el);
+
+            const angle = (Math.PI * 2 * i) / 10;
+            const speed = 4 + Math.random() * 3;
+            
+            this.particles.push({
+                el: el,
+                type: 'explosion',
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 25,
+                maxLife: 25,
+                scale: 1
             });
+        }
+    }
+
+    shootLaser(x, y) {
+        if (this.particles.length >= this.maxParticles) return;
+
+        const laser = document.createElement('div');
+        laser.className = 'shoot-particle';
+        this.particlesContainer.appendChild(laser);
+
+        this.particles.push({
+            el: laser,
+            type: 'laser',
+            x: x - 3,
+            y: y - 10,
+            vy: -22,
+            hasHit: false
         });
 
-        observer.observe(document.body, {
-            childList: true,
-            subtree: true
-        });
+        this.createClickExplosion(x, y);
+    }
+
+    createClickExplosion(x, y) {
+        if (this.particles.length >= this.maxParticles - 6) return;
+
+        for (let i = 0; i < 6; i++) {
+            const el = document.createElement('div');
+            el.className = 'explosion-particle';
+            el.style.width = '8px';
+            el.style.height = '8px';
+            this.particlesContainer.appendChild(el);
+
+            const angle = (Math.PI * 2 * i) / 6;
+            const speed = 3 + Math.random() * 2.5;
+
+            this.particles.push({
+                el: el,
+                type: 'click-explosion',
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 15,
+                maxLife: 15,
+                scale: 1
+            });
+        }
     }
 
     createTrailParticle(x, y) {
-        // Check particle limit to prevent lag
-        if (this.currentParticleCount > this.maxParticles) {
-            return;
-        }
+        if (this.particles.length >= this.maxParticles) return;
 
-        const particle = document.createElement('div');
-        particle.className = 'trail-particle';
-        
-        // Change trail color when damaged
-        if (this.isDamaged) {
-            particle.classList.add('damaged-trail');
-        }
-        
-        particle.style.left = `${x}px`;
-        particle.style.top = `${y}px`;
-        document.body.appendChild(particle);
-        this.currentParticleCount++;
+        const el = document.createElement('div');
+        el.className = 'trail-particle' + (this.isDamaged ? ' damaged-trail' : '');
+        this.particlesContainer.appendChild(el);
 
-        // Fade out, shrink, and FALL DOWN like smoke with SIDEWAYS DRIFT
-        let opacity = 1;
-        let size = 12;
-        let posY = y;
-        let posX = x;
-        let velocityY = 0.5;
-        let velocityX = (Math.random() - 0.5) * 1.5;
-        
-        const fadeOut = () => {
-            opacity -= 0.04;
-            size -= 0.25;
-            posY += velocityY;
-            posX += velocityX;
-            velocityY += 0.2;
-            
-            particle.style.opacity = opacity;
-            particle.style.width = `${size}px`;
-            particle.style.height = `${size}px`;
-            particle.style.top = `${posY}px`;
-            particle.style.left = `${posX}px`;
-            
-            if (opacity > 0 && size > 1) {
-                requestAnimationFrame(fadeOut);
-            } else {
-                particle.remove();
-                this.currentParticleCount--;
+        this.particles.push({
+            el: el,
+            type: 'trail',
+            x: x,
+            y: y,
+            vx: (Math.random() - 0.5) * 1.2,
+            vy: 0.5,
+            opacity: 1,
+            size: 12
+        });
+    }
+
+    createBrickExplosion(x, y) {
+        for (let i = 0; i < 8; i++) {
+            if (this.particles.length >= this.maxParticles) break;
+            const el = document.createElement('div');
+            el.className = 'explosion-particle';
+            el.style.width = '6px';
+            el.style.height = '6px';
+            this.particlesContainer.appendChild(el);
+
+            const angle = (Math.PI * 2 * i) / 8;
+            const speed = 3 + Math.random() * 2;
+
+            this.particles.push({
+                el: el,
+                type: 'explosion',
+                x: x,
+                y: y,
+                vx: Math.cos(angle) * speed,
+                vy: Math.sin(angle) * speed,
+                life: 18,
+                maxLife: 18,
+                scale: 1
+            });
+        }
+    }
+
+    spawnFallingObjects() {
+        this.spawnTimer = setInterval(() => {
+            if (document.hidden || this.fallingObjects.length >= this.maxFallingObjects) {
+                return;
             }
-        };
+            this.createFallingObject();
+        }, this.spawnInterval);
+    }
+
+    createFallingObject() {
+        const object = document.createElement('div');
+        object.className = 'falling-object';
         
-        fadeOut();
+        const x = Math.random() * (window.innerWidth - 40);
+        const y = -40;
+        
+        const brickType = Math.random() > 0.5 ? 'brick' : 'rock';
+        const colors = brickType === 'brick' 
+            ? ['#8b4513', '#a0522d', '#6b3410']
+            : ['#808080', '#696969', '#505050'];
+        
+        object.innerHTML = `
+            <svg width="24" height="24" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                ${brickType === 'brick' ? `
+                    <rect x="0" y="0" width="24" height="8" fill="${colors[0]}"/>
+                    <rect x="2" y="2" width="20" height="4" fill="${colors[1]}"/>
+                    <rect x="0" y="8" width="12" height="8" fill="${colors[0]}"/>
+                    <rect x="12" y="8" width="12" height="8" fill="${colors[0]}"/>
+                    <rect x="2" y="10" width="8" height="4" fill="${colors[1]}"/>
+                    <rect x="14" y="10" width="8" height="4" fill="${colors[1]}"/>
+                    <rect x="0" y="16" width="24" height="8" fill="${colors[0]}"/>
+                    <rect x="2" y="18" width="20" height="4" fill="${colors[1]}"/>
+                ` : `
+                    <rect x="4" y="0" width="16" height="4" fill="${colors[0]}"/>
+                    <rect x="0" y="4" width="20" height="4" fill="${colors[1]}"/>
+                    <rect x="2" y="8" width="20" height="8" fill="${colors[0]}"/>
+                    <rect x="4" y="16" width="16" height="4" fill="${colors[1]}"/>
+                    <rect x="8" y="20" width="12" height="4" fill="${colors[2]}"/>
+                `}
+            </svg>
+        `;
+        
+        this.particlesContainer.appendChild(object);
+        
+        this.fallingObjects.push({
+            element: object,
+            x: x,
+            y: y,
+            velocityY: 2 + Math.random() * 1.8,
+            rotation: 0,
+            rotationSpeed: (Math.random() - 0.5) * 3,
+            destroyed: false
+        });
+    }
+
+    updateFallingObjects() {
+        for (let i = this.fallingObjects.length - 1; i >= 0; i--) {
+            const obj = this.fallingObjects[i];
+            
+            if (obj.destroyed) continue;
+            
+            obj.y += obj.velocityY;
+            obj.rotation += obj.rotationSpeed;
+            
+            obj.element.style.transform = `translate3d(${obj.x}px, ${obj.y}px, 0) rotate(${obj.rotation}deg)`;
+            
+            // Cursor collision check
+            if (!this.isInvulnerable && !this.isDamaged && this.isVisible) {
+                const dx = this.cursorX - (obj.x + 12);
+                const dy = this.cursorY - (obj.y + 12);
+                if (dx * dx + dy * dy < 625) { // 25px radius squared
+                    this.takeDamage();
+                    this.destroyFallingObject(obj, i);
+                    continue;
+                }
+            }
+            
+            // Remove when off bottom
+            if (obj.y > window.innerHeight + 40) {
+                obj.element.remove();
+                this.fallingObjects.splice(i, 1);
+            }
+        }
+    }
+
+    checkLaserCollision(laserX, laserY) {
+        for (let i = this.fallingObjects.length - 1; i >= 0; i--) {
+            const obj = this.fallingObjects[i];
+            if (obj.destroyed) continue;
+            
+            const dx = laserX - (obj.x + 12);
+            const dy = laserY - (obj.y + 12);
+            if (dx * dx + dy * dy < 900) { // 30px radius squared
+                this.destroyFallingObject(obj, i);
+                return true;
+            }
+        }
+        return false;
+    }
+
+    destroyFallingObject(obj, index) {
+        if (!obj || obj.destroyed) return;
+        obj.destroyed = true;
+        
+        obj.element.classList.add('destroyed');
+        this.createBrickExplosion(obj.x + 12, obj.y + 12);
+        
+        setTimeout(() => {
+            if (obj.element && obj.element.parentElement) {
+                obj.element.remove();
+            }
+            const idx = this.fallingObjects.indexOf(obj);
+            if (idx > -1) {
+                this.fallingObjects.splice(idx, 1);
+            }
+        }, 300);
+    }
+
+    updateParticles() {
+        for (let i = this.particles.length - 1; i >= 0; i--) {
+            const p = this.particles[i];
+
+            if (p.type === 'laser') {
+                p.y += p.vy;
+                if (!p.hasHit && this.checkLaserCollision(p.x, p.y)) {
+                    p.hasHit = true;
+                    p.el.remove();
+                    this.particles.splice(i, 1);
+                    continue;
+                }
+                if (p.y < -30) {
+                    p.el.remove();
+                    this.particles.splice(i, 1);
+                    continue;
+                }
+                p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+
+            } else if (p.type === 'trail') {
+                p.opacity -= 0.04;
+                p.size -= 0.25;
+                p.y += p.vy;
+                p.x += p.vx;
+                p.vy += 0.2;
+
+                if (p.opacity <= 0 || p.size <= 1) {
+                    p.el.remove();
+                    this.particles.splice(i, 1);
+                    continue;
+                }
+
+                p.el.style.opacity = p.opacity;
+                p.el.style.width = `${p.size}px`;
+                p.el.style.height = `${p.size}px`;
+                p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0)`;
+
+            } else if (p.type === 'explosion' || p.type === 'click-explosion') {
+                p.x += p.vx;
+                p.y += p.vy;
+                p.life--;
+                p.scale = Math.max(0, p.life / p.maxLife);
+
+                if (p.life <= 0) {
+                    p.el.remove();
+                    this.particles.splice(i, 1);
+                    continue;
+                }
+
+                p.el.style.opacity = p.scale;
+                p.el.style.transform = `translate3d(${p.x}px, ${p.y}px, 0) scale(${p.scale})`;
+            }
+        }
     }
 
     animate() {
-        // Smooth following animation
-        this.cursorX += (this.mouseX - this.cursorX) * 0.2;
-        this.cursorY += (this.mouseY - this.cursorY) * 0.2;
+        // Interpolate cursor position smoothly
+        this.cursorX += (this.mouseX - this.cursorX) * 0.25;
+        this.cursorY += (this.mouseY - this.cursorY) * 0.25;
         
-        // Update spaceship position
-        this.spaceship.style.left = `${this.cursorX}px`;
-        this.spaceship.style.top = `${this.cursorY}px`;
+        // Use translate3d for zero-layout-reflow GPU positioning
+        this.cursor.style.transform = `translate3d(${this.cursorX}px, ${this.cursorY}px, 0)`;
         
-        // Create trail particles with stricter limits
-        const spawnChance = this.currentParticleCount > 50 ? 0.6 : 0.4;
-        
-        if (Math.random() > spawnChance && this.currentParticleCount < 70) {
-            const spawnX = this.cursorX + (Math.random() - 0.5) * 12 + 8;
-            const spawnY = this.cursorY + 18 + Math.random() * 8;
+        // Spawn trail particles with throttled chance
+        if (this.isVisible && !this.reducedMotion && Math.random() > 0.45 && this.particles.length < 50) {
+            const spawnX = this.cursorX + (Math.random() - 0.5) * 10 + 6;
+            const spawnY = this.cursorY + 16 + Math.random() * 6;
             this.createTrailParticle(spawnX, spawnY);
         }
         
-        // Update falling objects
-        this.updateFallingObjects();
+        // Batched update for all active particles in single RAF pass
+        this.updateParticles();
         
-        // Continue animation loop
-        requestAnimationFrame(() => this.animate());
+        // Update falling objects
+        if (!this.reducedMotion) {
+            this.updateFallingObjects();
+        }
+        
+        this.rafId = requestAnimationFrame(this.animate);
     }
 }
 
-// ===================================
-// Initialize Custom Cursor
-// ===================================
+// Initialize Custom Cursor only on desktop
 document.addEventListener('DOMContentLoaded', () => {
-    // Only initialize on desktop (not mobile/tablet)
-    if (window.innerWidth > 768) {
+    if (window.innerWidth > 768 && window.matchMedia('(pointer: fine)').matches) {
         new CustomCursor();
-    } else {
     }
 });

@@ -50,17 +50,22 @@ class ProgressBar {
     }
 
     init() {
-        window.addEventListener('scroll', () => {
-            const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
-            const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
-            const scrollPercentage = (scrollTop / scrollHeight);
+        if (!this.progressBar) return;
+        let ticking = false;
 
-            gsap.to(this.progressBar, {
-                scaleX: scrollPercentage,
-                duration: 0.1,
-                ease: 'none'
-            });
-        });
+        window.addEventListener('scroll', () => {
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const scrollTop = window.pageYOffset || document.documentElement.scrollTop;
+                    const scrollHeight = document.documentElement.scrollHeight - document.documentElement.clientHeight;
+                    const scrollPercentage = scrollHeight > 0 ? (scrollTop / scrollHeight) : 0;
+
+                    this.progressBar.style.transform = `scaleX(${scrollPercentage})`;
+                    ticking = false;
+                });
+                ticking = true;
+            }
+        }, { passive: true });
     }
 }
 
@@ -726,38 +731,29 @@ class HeaderScroll {
     init() {
         if (!this.header) return;
 
-        let lastScroll = 0;
+        let ticking = false;
+        let isScrolled = false;
+
+        const updateHeader = () => {
+            const currentScroll = window.pageYOffset || document.documentElement.scrollTop;
+            const shouldBeScrolled = currentScroll > 60;
+
+            if (shouldBeScrolled !== isScrolled) {
+                isScrolled = shouldBeScrolled;
+                this.header.classList.toggle('scrolled', isScrolled);
+            }
+            ticking = false;
+        };
 
         window.addEventListener('scroll', () => {
-            const currentScroll = window.pageYOffset;
-            const isLightMode = document.body.classList.contains('light-theme');
-
-            if (currentScroll > 100) {
-                // Check if light mode or dark mode
-                if (isLightMode) {
-                    this.header.style.background = 'rgba(255, 255, 255, 0.95)';
-                    this.header.style.backdropFilter = 'blur(20px)';
-                    this.header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.1)';
-                } else {
-                    this.header.style.background = 'rgba(0, 0, 0, 0.95)';
-                    this.header.style.backdropFilter = 'blur(20px)';
-                    this.header.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-                }
-            } else {
-                // At the top - use gradient
-                if (isLightMode) {
-                    this.header.style.background = 'linear-gradient(to bottom, rgba(255, 255, 255, 0.8), transparent)';
-                    this.header.style.backdropFilter = 'blur(10px)';
-                    this.header.style.boxShadow = 'none';
-                } else {
-                    this.header.style.background = 'linear-gradient(to bottom, rgba(0, 0, 0, 0.8), transparent)';
-                    this.header.style.backdropFilter = 'blur(10px)';
-                    this.header.style.boxShadow = 'none';
-                }
+            if (!ticking) {
+                window.requestAnimationFrame(updateHeader);
+                ticking = true;
             }
+        }, { passive: true });
 
-            lastScroll = currentScroll;
-        });
+        // Initial check on page load
+        updateHeader();
     }
 }
 
@@ -781,6 +777,7 @@ class SkillsWheel {
 
         this.currentRotation = 0;
         this.isDragging = false;
+        this.isAnimating = false;
         this.activeIndex = null;
         this.velocity = 0;
         this.lastAngle = 0;
@@ -793,12 +790,17 @@ class SkillsWheel {
         this.inactivityTimer = null;
         this.inactivityDelay = 7000; // 7 seconds
 
-        // Ticking sound properties
+        // Ticking sound pool (4 reusable audio instances to prevent memory leaks)
         this.lastTickRotation = 0;
         this.tickInterval = 8; // Play tick sound every 8 degrees of rotation
-        this.tickSound = new Audio('assets/soundeffect/wheel-spin.wav');
-        this.tickSound.volume = 0.3; // Subtle volume
-        this.tickSound.preload = 'auto';
+        this.tickSoundPool = [];
+        for (let i = 0; i < 4; i++) {
+            const a = new Audio('assets/soundeffect/wheel-spin.wav');
+            a.volume = 0.25;
+            a.preload = 'auto';
+            this.tickSoundPool.push(a);
+        }
+        this.tickPoolIndex = 0;
 
         this.init();
     }
@@ -832,7 +834,10 @@ class SkillsWheel {
         }, 500);
 
         // Add click event listener to the sphere
-        this.sphere.addEventListener('click', () => this.spinToRandom());
+        this.sphere.addEventListener('click', (e) => {
+            e.stopPropagation();
+            this.spinToRandom();
+        });
     }
 
     spinToRandom() {
@@ -842,19 +847,25 @@ class SkillsWheel {
         this.isAnimating = true;
         this.stopAutoSpin();
         this.clearInactivityTimer();
+        gsap.killTweensOf(this.wheel);
 
         const randomCardIndex = Math.floor(Math.random() * this.cards.length);
         const anglePerCard = 360 / this.cards.length;
         const randomAngle = -randomCardIndex * anglePerCard;
 
         // Add extra rotations for the spinning effect
-        const currentRotation = gsap.getProperty(this.wheel, "rotation");
+        const currentRotation = gsap.getProperty(this.wheel, "rotation") || 0;
         const rotations = 5;
         const finalRotation = currentRotation + (rotations * 360) + (randomAngle - (currentRotation % 360));
 
-        const soundDuration = this.soundEffects.gearClickSound.duration;
+        let soundDuration = 1.8;
+        if (this.soundEffects && this.soundEffects.gearClickSound && !isNaN(this.soundEffects.gearClickSound.duration) && this.soundEffects.gearClickSound.duration > 0) {
+            soundDuration = this.soundEffects.gearClickSound.duration;
+        }
 
-        this.soundEffects.playGearClickSound();
+        if (this.soundEffects) {
+            this.soundEffects.playGearClickSound();
+        }
 
         gsap.to(this.wheel, {
             rotation: finalRotation,
@@ -863,6 +874,7 @@ class SkillsWheel {
             onUpdate: () => {
                 this.currentRotation = gsap.getProperty(this.wheel, "rotation");
                 this.updateCardRotations();
+                this.checkAndPlayTick();
             },
             onComplete: () => {
                 this.currentRotation = finalRotation;
@@ -879,16 +891,12 @@ class SkillsWheel {
         const screenWidth = window.innerWidth;
 
         if (screenWidth <= 480) {
-            // Small mobile - 600px wheel = 300px radius / 2 = 150px usable
             radius = 230;
         } else if (screenWidth <= 768) {
-            // Mobile - 800px wheel = 400px radius / 2 = 200px usable
             radius = 320;
         } else if (screenWidth <= 1024) {
-            // Tablet - 1200px wheel = 600px radius / 2 = 300px usable
             radius = 500;
         } else {
-            // Desktop - 1400px wheel = 700px radius / 2 = 350px usable
             radius = 550;
         }
 
@@ -900,7 +908,6 @@ class SkillsWheel {
             const x = Math.cos(angle) * radius;
             const y = Math.sin(angle) * radius;
 
-            // NO ROTATION - Keep cards perfectly square and straight!
             gsap.set(card, {
                 x: x,
                 y: y,
@@ -910,19 +917,15 @@ class SkillsWheel {
     }
 
     playTickSound() {
-        // Create a new audio instance for overlapping sounds
-        const tick = this.tickSound.cloneNode();
-        tick.volume = 0.3;
-        tick.play().catch(err => {
-            // Ignore audio play errors (e.g., user hasn't interacted yet)
-        });
+        if (!this.tickSoundPool || this.tickSoundPool.length === 0) return;
+        const tick = this.tickSoundPool[this.tickPoolIndex];
+        this.tickPoolIndex = (this.tickPoolIndex + 1) % this.tickSoundPool.length;
+        tick.currentTime = 0;
+        tick.play().catch(() => {});
     }
 
     checkAndPlayTick() {
-        // Calculate how many degrees have passed since last tick
         const rotationDiff = Math.abs(this.currentRotation - this.lastTickRotation);
-
-        // If we've rotated enough degrees, play a tick sound
         if (rotationDiff >= this.tickInterval) {
             this.playTickSound();
             this.lastTickRotation = this.currentRotation;
@@ -932,21 +935,34 @@ class SkillsWheel {
     setupDrag() {
         let startAngle = 0;
 
-        // Get angle from mouse position
+        // Get angle from mouse or touch position
         const getAngle = (e) => {
             const rect = this.wheel.getBoundingClientRect();
             const centerX = rect.left + rect.width / 2;
             const centerY = rect.top + rect.height / 2;
 
-            const clientX = e.clientX || (e.touches && e.touches[0].clientX);
-            const clientY = e.clientY || (e.touches && e.touches[0].clientY);
+            let clientX, clientY;
+            if (e.touches && e.touches.length > 0) {
+                clientX = e.touches[0].clientX;
+                clientY = e.touches[0].clientY;
+            } else if (e.changedTouches && e.changedTouches.length > 0) {
+                clientX = e.changedTouches[0].clientX;
+                clientY = e.changedTouches[0].clientY;
+            } else {
+                clientX = e.clientX;
+                clientY = e.clientY;
+            }
 
             return Math.atan2(clientY - centerY, clientX - centerX);
         };
 
         const onMouseDown = (e) => {
+            if (e.type === 'mousedown' && e.button !== 0) return;
             e.preventDefault();
             this.isDragging = true;
+            this.isAnimating = false;
+            gsap.killTweensOf(this.wheel);
+
             const angle = getAngle(e);
             startAngle = angle - (this.currentRotation * Math.PI / 180);
             this.lastAngle = angle;
@@ -964,11 +980,11 @@ class SkillsWheel {
             if (this.sphere) {
                 this.sphere.classList.add('is-active');
             }
-
         };
 
         const onMouseMove = (e) => {
             if (!this.isDragging) return;
+            if (e.cancelable) e.preventDefault();
 
             const currentTime = Date.now();
             const currentAngle = getAngle(e);
@@ -982,12 +998,12 @@ class SkillsWheel {
                 if (deltaAngle < -Math.PI) deltaAngle += 2 * Math.PI;
 
                 // Calculate velocity with smoothing for better momentum feel
-                const instantVelocity = deltaAngle / deltaTime * 16;
+                const instantVelocity = (deltaAngle / deltaTime) * 16;
                 // Smooth velocity with exponential moving average
                 this.velocity = this.velocity * 0.5 + instantVelocity * 0.5;
             }
 
-            const rotation = (currentAngle - startAngle) * 180 / Math.PI;
+            const rotation = ((currentAngle - startAngle) * 180) / Math.PI;
             this.currentRotation = rotation;
 
             gsap.set(this.wheel, {
@@ -1027,16 +1043,20 @@ class SkillsWheel {
         };
 
         this.wheel.addEventListener('mousedown', onMouseDown);
-        this.wheel.addEventListener('touchstart', onMouseDown);
+        this.wheel.addEventListener('touchstart', onMouseDown, { passive: false });
 
         document.addEventListener('mousemove', onMouseMove);
-        document.addEventListener('touchmove', onMouseMove);
+        document.addEventListener('touchmove', onMouseMove, { passive: false });
 
         document.addEventListener('mouseup', onMouseUp);
         document.addEventListener('touchend', onMouseUp);
+        document.addEventListener('touchcancel', onMouseUp);
     }
 
     applyMomentum() {
+        gsap.killTweensOf(this.wheel);
+        this.isAnimating = true;
+
         // Use GSAP for smooth free-wheeling momentum animation
         const velocityMultiplier = 1200; // Very high for continuous spinning feel
 
@@ -1067,12 +1087,15 @@ class SkillsWheel {
             },
             onComplete: () => {
                 this.currentRotation = finalRotation;
+                this.isAnimating = false;
                 this.snapToNearest();
             }
         });
     }
 
     snapToNearest() {
+        gsap.killTweensOf(this.wheel);
+        this.isAnimating = true;
         const anglePerCard = 360 / this.cards.length;
 
         // Calculate nearest snap position
@@ -1081,7 +1104,7 @@ class SkillsWheel {
         // Animate to snap position
         gsap.to(this.wheel, {
             rotation: nearestSnap,
-            duration: 0.3,
+            duration: 0.35,
             ease: 'power2.out',
             onUpdate: () => {
                 this.currentRotation = gsap.getProperty(this.wheel, 'rotation');
@@ -1089,6 +1112,7 @@ class SkillsWheel {
             },
             onComplete: () => {
                 this.currentRotation = nearestSnap;
+                this.isAnimating = false;
                 this.detectActiveCard();
                 // Play snap sound when card centers
                 this.playTickSound();
@@ -1191,7 +1215,7 @@ class SkillsWheel {
     }
 
     startAutoSpin() {
-        if (this.isAutoSpinning) return; // Already spinning
+        if (this.isAutoSpinning || this.isDragging || this.isAnimating) return;
 
         this.isAutoSpinning = true;
 
@@ -1228,15 +1252,15 @@ class SkillsWheel {
             cancelAnimationFrame(this.autoSpinAnimation);
             this.autoSpinAnimation = null;
         }
-
-
     }
 
     startInactivityTimer() {
         this.clearInactivityTimer();
 
         this.inactivityTimer = setTimeout(() => {
-            this.startAutoSpin();
+            if (!this.isDragging && !this.isAnimating) {
+                this.startAutoSpin();
+            }
         }, this.inactivityDelay);
     }
 
@@ -1260,6 +1284,8 @@ class ParticleBackground {
         this.particles = null;
         this.mouse = { x: 0, y: 0 };
         this.targetMouse = { x: 0, y: 0 };
+        this.isRunning = false;
+        this.rafId = null;
 
         this.init();
     }
@@ -1281,52 +1307,92 @@ class ParticleBackground {
         );
         this.camera.position.z = 5;
 
-        // Set up renderer
-        this.renderer = new THREE.WebGLRenderer({ alpha: true });
+        // Set up renderer with powerPreference and reduced resolution overhead
+        this.renderer = new THREE.WebGLRenderer({
+            alpha: true,
+            powerPreference: 'high-performance',
+            antialias: false
+        });
         this.renderer.setSize(window.innerWidth, window.innerHeight);
+        this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
         this.renderer.setClearAlpha(0);
         this.container.appendChild(this.renderer.domElement);
 
         // Create particles
         this.createParticles();
 
-        // Mouse movement
+        // Throttled mouse movement
         window.addEventListener('mousemove', (event) => {
             this.mouse.x = (event.clientX / window.innerWidth) * 2 - 1;
             this.mouse.y = -(event.clientY / window.innerHeight) * 2 + 1;
-        });
+        }, { passive: true });
 
-        // Handle resize
-        window.addEventListener('resize', () => this.handleResize());
+        // Handle resize with debouncing
+        let resizeTimer;
+        window.addEventListener('resize', () => {
+            clearTimeout(resizeTimer);
+            resizeTimer = setTimeout(() => this.handleResize(), 200);
+        }, { passive: true });
+
+        // IntersectionObserver: Pause Three.js render loop when off screen
+        this.isRunning = true;
+        if ('IntersectionObserver' in window) {
+            const observer = new IntersectionObserver((entries) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        if (!this.isRunning) {
+                            this.isRunning = true;
+                            this.animate();
+                        }
+                    } else {
+                        this.isRunning = false;
+                        if (this.rafId) {
+                            cancelAnimationFrame(this.rafId);
+                            this.rafId = null;
+                        }
+                    }
+                });
+            }, { threshold: 0.05 });
+            observer.observe(this.container);
+        }
+
+        // Pause when tab is hidden to save battery & CPU
+        document.addEventListener('visibilitychange', () => {
+            if (document.hidden) {
+                this.isRunning = false;
+                if (this.rafId) {
+                    cancelAnimationFrame(this.rafId);
+                    this.rafId = null;
+                }
+            } else if (!this.isRunning) {
+                this.isRunning = true;
+                this.animate();
+            }
+        });
 
         // Start animation
         this.animate();
-
     }
 
     createParticles() {
-        const numParticles = 500;
+        const numParticles = 400;
         const geometry = new THREE.BufferGeometry();
         const positions = new Float32Array(numParticles * 3);
         const colors = new Float32Array(numParticles * 3);
 
         for (let i = 0; i < numParticles; i++) {
-            // Random positions
             positions[i * 3] = (Math.random() - 0.5) * 10;
             positions[i * 3 + 1] = (Math.random() - 0.5) * 10;
             positions[i * 3 + 2] = (Math.random() - 0.5) * 10;
 
-            // Alternate between white and blue particles
             if (i % 2 === 0) {
-                // White particles
-                colors[i * 3] = 1.0;     // R
-                colors[i * 3 + 1] = 1.0; // G
-                colors[i * 3 + 2] = 1.0; // B
+                colors[i * 3] = 1.0;
+                colors[i * 3 + 1] = 1.0;
+                colors[i * 3 + 2] = 1.0;
             } else {
-                // Blue particles (#4276C3)
-                colors[i * 3] = 66 / 255;   // R
-                colors[i * 3 + 1] = 118 / 255; // G
-                colors[i * 3 + 2] = 195 / 255; // B
+                colors[i * 3] = 66 / 255;
+                colors[i * 3 + 1] = 118 / 255;
+                colors[i * 3 + 2] = 195 / 255;
             }
         }
 
@@ -1343,7 +1409,8 @@ class ParticleBackground {
     }
 
     animate() {
-        requestAnimationFrame(() => this.animate());
+        if (!this.isRunning) return;
+        this.rafId = requestAnimationFrame(() => this.animate());
 
         // Wave motion
         const time = Date.now() * 0.0001;
@@ -1355,21 +1422,18 @@ class ParticleBackground {
 
         this.particles.geometry.attributes.position.needsUpdate = true;
 
-        // Smooth mouse interaction
-        this.targetMouse.x += (this.mouse.x * 0.2 - this.targetMouse.x) * 0.02;
-        this.targetMouse.y += (-this.mouse.y * 0.2 - this.targetMouse.y) * 0.02;
+        // Smooth mouse interaction with zero-allocation LERP (replaces per-frame gsap.to!)
+        this.targetMouse.x += (this.mouse.x * 0.2 - this.targetMouse.x) * 0.05;
+        this.targetMouse.y += (-this.mouse.y * 0.2 - this.targetMouse.y) * 0.05;
 
-        // Rotate particles towards mouse
-        gsap.to(this.particles.rotation, {
-            x: this.targetMouse.x,
-            y: this.targetMouse.y,
-            duration: 1,
-        });
+        this.particles.rotation.x += (this.targetMouse.x - this.particles.rotation.x) * 0.05;
+        this.particles.rotation.y += (this.targetMouse.y - this.particles.rotation.y) * 0.05;
 
         this.renderer.render(this.scene, this.camera);
     }
 
     handleResize() {
+        if (!this.camera || !this.renderer) return;
         this.camera.aspect = window.innerWidth / window.innerHeight;
         this.camera.updateProjectionMatrix();
         this.renderer.setSize(window.innerWidth, window.innerHeight);
@@ -1384,24 +1448,24 @@ class SoundEffects {
         this.menuSound = new Audio('assets/soundeffect/pop-sound.wav');
         this.clickSound = new Audio('assets/soundeffect/mouse-click.mp3');
         this.gearClickSound = new Audio('assets/soundeffect/gear-click.mp3');
-        this.menuSound.preload = 'auto';
-        this.clickSound.preload = 'auto';
+        this.menuSound.preload = 'none';
+        this.clickSound.preload = 'none';
         this.gearClickSound.preload = 'auto';
     }
 
     playMenuSound() {
         this.menuSound.currentTime = 0;
-        this.menuSound.play();
+        this.menuSound.play().catch(() => {});
     }
 
     playClickSound() {
         this.clickSound.currentTime = 0;
-        this.clickSound.play();
+        this.clickSound.play().catch(() => {});
     }
 
     playGearClickSound() {
         this.gearClickSound.currentTime = 0;
-        this.gearClickSound.play();
+        this.gearClickSound.play().catch(() => {});
     }
 
     playGearClickSoundMultiple(times, interval) {
@@ -1436,30 +1500,30 @@ document.addEventListener('DOMContentLoaded', () => {
     new CollaborationAnimations();
     new ExperienceTabs(soundEffects);
     new BackToTopButton();
-    // ParallaxEffect removed to prevent gap between sections
 
-    // Add click sound to all relevant elements
-    document.querySelectorAll('.link, .accordion-button, .project-btn, .theme-toggle, .certificate-image, .download-cv-btn').forEach(element => {
-        element.addEventListener('click', () => {
+    // High-performance event delegation for click sounds
+    document.addEventListener('click', (e) => {
+        if (e.target && e.target.closest && e.target.closest('.link, .accordion-button, .project-btn, .theme-toggle, .certificate-image, .download-cv-btn')) {
             soundEffects.playClickSound();
-        });
-    });
+        }
+    }, { passive: true });
 
     // Initial page load animation
-    gsap.from('.hero-content', {
-        opacity: 0,
-        y: 50,
-        duration: 1,
-        delay: 0.3,
-        ease: 'power3.out'
-    });
+    if (typeof gsap !== 'undefined') {
+        gsap.from('.hero-content', {
+            opacity: 0,
+            y: 50,
+            duration: 1,
+            delay: 0.3,
+            ease: 'power3.out'
+        });
 
-    // Social links - SET to fully visible immediately (no animation)
-    gsap.set('.social-links a', {
-        opacity: 1,
-        x: 0
-    });
-
+        // Social links - SET to fully visible immediately (no animation)
+        gsap.set('.social-links a', {
+            opacity: 1,
+            x: 0
+        });
+    }
 });
 
 // ===================================
@@ -1469,8 +1533,8 @@ class CertificateLightbox {
     constructor(soundEffects) {
         this.lightbox = document.getElementById('certificateLightbox');
         this.lightboxImage = document.getElementById('lightboxImage');
+        this.lightboxCaption = document.getElementById('lightboxCaption');
         this.lightboxClose = document.getElementById('lightboxClose');
-        this.certificateImages = document.querySelectorAll('.certificate-image');
         this.soundEffects = soundEffects;
 
         this.init();
@@ -1481,26 +1545,36 @@ class CertificateLightbox {
             return;
         }
 
-        // Add click event to all certificate images
-        this.certificateImages.forEach(imageContainer => {
-            imageContainer.addEventListener('click', (e) => {
-                const img = imageContainer.querySelector('img');
+        // Add click event to all certificate images and preview buttons
+        document.querySelectorAll('.certificate-image, .cert-btn-preview, .cert-preview-pill').forEach(el => {
+            el.addEventListener('click', (e) => {
+                const card = el.closest('.certificate-card');
+                const img = card ? card.querySelector('.certificate-image img') : el.querySelector('img');
                 if (img) {
+                    if (this.soundEffects) {
+                        this.soundEffects.playClickSound();
+                    }
                     this.openLightbox(img.src, img.alt);
                 }
             });
         });
 
         // Close button
-        this.lightboxClose.addEventListener('click', () => {
-            this.soundEffects.playClickSound();
-            this.closeLightbox();
-        });
+        if (this.lightboxClose) {
+            this.lightboxClose.addEventListener('click', () => {
+                if (this.soundEffects) {
+                    this.soundEffects.playClickSound();
+                }
+                this.closeLightbox();
+            });
+        }
 
         // Click outside to close
         this.lightbox.addEventListener('click', (e) => {
             if (e.target === this.lightbox) {
-                this.soundEffects.playClickSound();
+                if (this.soundEffects) {
+                    this.soundEffects.playClickSound();
+                }
                 this.closeLightbox();
             }
         });
@@ -1508,16 +1582,20 @@ class CertificateLightbox {
         // ESC key to close
         document.addEventListener('keydown', (e) => {
             if (e.key === 'Escape' && this.lightbox.classList.contains('active')) {
-                this.soundEffects.playClickSound();
+                if (this.soundEffects) {
+                    this.soundEffects.playClickSound();
+                }
                 this.closeLightbox();
             }
         });
-
     }
 
     openLightbox(src, alt) {
         this.lightboxImage.src = src;
         this.lightboxImage.alt = alt;
+        if (this.lightboxCaption) {
+            this.lightboxCaption.textContent = alt;
+        }
         this.lightbox.classList.add('active');
         document.body.style.overflow = 'hidden'; // Prevent scrolling
     }
@@ -1680,13 +1758,22 @@ class BackToTopButton {
     init() {
         if (!this.button) return;
 
+        let ticking = false;
+        let isShown = false;
+
         window.addEventListener('scroll', () => {
-            if (window.pageYOffset > 300) {
-                this.button.classList.add('show');
-            } else {
-                this.button.classList.remove('show');
+            if (!ticking) {
+                window.requestAnimationFrame(() => {
+                    const shouldShow = (window.pageYOffset || document.documentElement.scrollTop) > 300;
+                    if (shouldShow !== isShown) {
+                        isShown = shouldShow;
+                        this.button.classList.toggle('show', isShown);
+                    }
+                    ticking = false;
+                });
+                ticking = true;
             }
-        });
+        }, { passive: true });
     }
 }
 
